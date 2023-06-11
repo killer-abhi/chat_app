@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -18,7 +19,17 @@ class GoogleSignInProvider extends ChangeNotifier {
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
+
     await FirebaseAuth.instance.signInWithCredential(credential);
+    print(_user);
+    final user = <String, dynamic>{
+      "username": _user!.displayName,
+      "email": _user!.email,
+      "image_url": _user!.photoUrl,
+    };
+
+    final db = FirebaseFirestore.instance;
+    db.collection('users').doc(_user!.id).set(user);
     notifyListeners();
   }
 }

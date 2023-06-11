@@ -1,38 +1,88 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:global_chat/widgets/user_image_picker.dart';
 
+final _firebase = FirebaseAuth.instance;
+
 class EmailAuthScreen extends StatefulWidget {
-  const EmailAuthScreen(
-      {Key? key, required this.isLogin, required this.isEmailSignUp})
-      : super(key: key);
+  const EmailAuthScreen({
+    super.key,
+    required this.isLogin,
+    required this.isEmailSignUp,
+  });
   final bool isLogin;
   final bool isEmailSignUp;
+
   @override
-  State<EmailAuthScreen> createState() => _EmailAuthState();
+  State<EmailAuthScreen> createState() => _EmailAuthScreenState();
 }
 
-class _EmailAuthState extends State<EmailAuthScreen> {
-  var _enteredEmail = '';
-  var _enteredUsername = '';
-  var _enteredPassword = '';
-  File? _selectedImage;
-
-  var _isAuthenticating = false;
-
-  final _form = GlobalKey<FormState>();
-
-  void submit() {
-    final isValid = _form.currentState!.validate();
-    if (!isValid) {
-      return;
-    }
-    _form.currentState!.save();
-  }
-
+class _EmailAuthScreenState extends State<EmailAuthScreen> {
   @override
   Widget build(BuildContext context) {
-    final isLogin = widget.isLogin;
+    var enteredEmail = '';
+
+    var enteredUsername = '';
+
+    var enteredPassword = '';
+
+    File? selectedImage;
+
+    var isAuthenticating = false;
+
+    final form = GlobalKey<FormState>();
+
+    void submit() async {
+      final isValid = form.currentState!.validate();
+      if (!isValid || !widget.isLogin && selectedImage == null) {
+        return;
+      }
+      form.currentState!.save();
+      try {
+        setState(() {
+          isAuthenticating = true;
+        });
+        if (widget.isLogin) {
+          final userCredentials = await _firebase.signInWithEmailAndPassword(
+              email: enteredEmail, password: enteredPassword);
+        } else {
+          final userCredentials =
+              await _firebase.createUserWithEmailAndPassword(
+                  email: enteredEmail, password: enteredPassword);
+          final storageRef = FirebaseStorage.instance
+              .ref()
+              .child('user_images')
+              .child('${userCredentials.user!.uid}.jpg');
+          await storageRef.putFile(selectedImage!);
+          final imageUrl = await storageRef.getDownloadURL();
+
+          final user = <String, dynamic>{
+            "username": enteredUsername,
+            "email": enteredEmail,
+            "image_url": imageUrl,
+          };
+
+          final db = FirebaseFirestore.instance;
+          db.collection('users').doc(userCredentials.user!.uid).set(user);
+        }
+      } on FirebaseAuthException catch (error) {
+        if (error.code == 'email-already-in-use') {}
+
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(error.message ?? 'Authentication failed.'),
+          ),
+        );
+        setState(() {
+          isAuthenticating = false;
+        });
+      }
+    }
+
     return Card(
       margin: const EdgeInsets.all(20),
       child: Padding(
@@ -43,16 +93,16 @@ class _EmailAuthState extends State<EmailAuthScreen> {
           bottom: 30,
         ),
         child: Form(
-          key: _form,
+          key: form,
           child: Column(
             children: [
-              if (!isLogin)
+              if (!widget.isLogin)
                 UserImagePicker(
                   onPickImage: (pickedImage) {
-                    _selectedImage = pickedImage;
+                    selectedImage = pickedImage;
                   },
                 ),
-              if (!isLogin)
+              if (!widget.isLogin)
                 TextFormField(
                   decoration: const InputDecoration(
                     labelText: 'Full Name',
@@ -69,7 +119,7 @@ class _EmailAuthState extends State<EmailAuthScreen> {
                     return null;
                   },
                   onSaved: (value) {
-                    _enteredUsername = value!;
+                    enteredUsername = value!;
                   },
                 ),
               TextFormField(
@@ -88,7 +138,7 @@ class _EmailAuthState extends State<EmailAuthScreen> {
                   return null;
                 },
                 onSaved: (value) {
-                  _enteredEmail = value!;
+                  enteredEmail = value!;
                 },
               ),
               TextFormField(
@@ -107,21 +157,21 @@ class _EmailAuthState extends State<EmailAuthScreen> {
                   return null;
                 },
                 onSaved: (value) {
-                  _enteredPassword = value!;
+                  enteredPassword = value!;
                 },
               ),
               const SizedBox(
                 height: 15,
               ),
-              if (_isAuthenticating) const CircularProgressIndicator(),
-              if (!_isAuthenticating)
+              if (isAuthenticating) const CircularProgressIndicator(),
+              if (!isAuthenticating)
                 ElevatedButton(
                   onPressed: submit,
                   style: ElevatedButton.styleFrom(
                     backgroundColor:
                         Theme.of(context).colorScheme.primaryContainer,
                   ),
-                  child: Text(isLogin ? 'Login' : 'Create Account'),
+                  child: Text(widget.isLogin ? 'Login' : 'Create Account'),
                 ),
             ],
           ),

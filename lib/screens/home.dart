@@ -7,6 +7,8 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // String? hello;
+    // hello!.length;
     return Scaffold(
       body: StreamBuilder(
         stream: FirebaseAuth.instance.authStateChanges(),
@@ -18,8 +20,23 @@ class Home extends StatelessWidget {
               child: Text('Something Went Wrong'),
             );
           } else if (snapshot.hasData) {
-            return const Center(
-              child: Text('Logged In'),
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Logged In'),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      FirebaseAuth.instance.signOut();
+                    },
+                    icon: const Icon(Icons.logout),
+                    label: const Text('Logout'),
+                  ),
+                ],
+              ),
             );
           } else {
             return const LoginScreen();

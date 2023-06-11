@@ -13,28 +13,37 @@ class GoogleLogin extends StatefulWidget {
 }
 
 class _GoogleLoginState extends State<GoogleLogin> {
-  Widget content = const CircularProgressIndicator();
+  var _isAuthenticating = false;
+  void authenticate() async {
+    setState(() {
+      _isAuthenticating = true;
+    });
+    final provider = Provider.of<GoogleSignInProvider>(context, listen: false);
+    await provider.googleLogin();
+    setState(() {
+      _isAuthenticating = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.all(20),
-      child: TextButton.icon(
-        onPressed: () {
-          final provider =
-              Provider.of<GoogleSignInProvider>(context, listen: false);
-          provider.googleLogin();
-        },
-        style: ElevatedButton.styleFrom(
-          foregroundColor: Colors.black,
-          minimumSize: const Size(double.infinity, 50),
-        ),
-        icon: const FaIcon(
-          FontAwesomeIcons.google,
-          color: Colors.red,
-        ),
-        label:
-            Text(widget.isLogin ? 'SignIn with Google' : 'SignUp with Google'),
-      ),
-    );
+    return _isAuthenticating
+        ? const CircularProgressIndicator()
+        : Card(
+            margin: const EdgeInsets.all(20),
+            child: TextButton.icon(
+              onPressed: authenticate,
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.black,
+                minimumSize: const Size(double.infinity, 50),
+              ),
+              icon: const FaIcon(
+                FontAwesomeIcons.google,
+                color: Colors.red,
+              ),
+              label: Text(
+                  widget.isLogin ? 'SignIn with Google' : 'SignUp with Google'),
+            ),
+          );
   }
 }
