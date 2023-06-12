@@ -41,7 +41,7 @@ class _UserScreenState extends State<UserScreen> with TickerProviderStateMixin {
           tabs: const [
             Tab(
               // child: const Text('Chats'),
-              icon: Icon(Icons.receipt),
+              icon: Icon(Icons.wechat),
             ),
             Tab(
               icon: Icon(Icons.search),
@@ -64,10 +64,11 @@ class _UserScreenState extends State<UserScreen> with TickerProviderStateMixin {
           UserProfileScreen(),
         ],
       ),
-      floatingActionButton: ElevatedButton.icon(
-          onPressed: () {},
-          icon: const Icon(Icons.start),
-          label: const Text('Chat')),
+      // floatingActionButton: ElevatedButton.icon(
+      //   onPressed: () {},
+      //   icon: const Icon(Icons.start),
+      //   label: const Text('Chat'),
+      // ),
     );
   }
 }

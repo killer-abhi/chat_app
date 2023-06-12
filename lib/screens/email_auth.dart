@@ -21,68 +21,67 @@ class EmailAuthScreen extends StatefulWidget {
 }
 
 class _EmailAuthScreenState extends State<EmailAuthScreen> {
+  var _enteredEmail = '';
+
+  var _enteredUsername = '';
+
+  var _enteredPassword = '';
+
+  File? _selectedImage;
+
+  var _isAuthenticating = false;
+
+  final _form = GlobalKey<FormState>();
+
+  void submit() async {
+    final isValid = _form.currentState!.validate();
+    if (!isValid || !widget.isLogin && _selectedImage == null) {
+      return;
+    }
+    _form.currentState!.save();
+    try {
+      setState(() {
+        _isAuthenticating = true;
+      });
+      if (widget.isLogin) {
+        final userCredentials = await _firebase.signInWithEmailAndPassword(
+            email: _enteredEmail, password: _enteredPassword);
+      } else {
+        final userCredentials = await _firebase.createUserWithEmailAndPassword(
+            email: _enteredEmail, password: _enteredPassword);
+        final storageRef = FirebaseStorage.instance
+            .ref()
+            .child('user_images')
+            .child('${userCredentials.user!.uid}.jpg');
+        await storageRef.putFile(_selectedImage!);
+        final imageUrl = await storageRef.getDownloadURL();
+
+        final user = <String, dynamic>{
+          "username": _enteredUsername,
+          "email": _enteredEmail,
+          "image_url": imageUrl,
+        };
+
+        final db = FirebaseFirestore.instance;
+        db.collection('users').doc(userCredentials.user!.uid).set(user);
+      }
+    } on FirebaseAuthException catch (error) {
+      if (error.code == 'email-already-in-use') {}
+
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error.message ?? 'Authentication failed.'),
+        ),
+      );
+      setState(() {
+        _isAuthenticating = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    var enteredEmail = '';
-
-    var enteredUsername = '';
-
-    var enteredPassword = '';
-
-    File? selectedImage;
-
-    var isAuthenticating = false;
-
-    final form = GlobalKey<FormState>();
-
-    void submit() async {
-      final isValid = form.currentState!.validate();
-      if (!isValid || !widget.isLogin && selectedImage == null) {
-        return;
-      }
-      form.currentState!.save();
-      try {
-        setState(() {
-          isAuthenticating = true;
-        });
-        if (widget.isLogin) {
-          final userCredentials = await _firebase.signInWithEmailAndPassword(
-              email: enteredEmail, password: enteredPassword);
-        } else {
-          final userCredentials =
-              await _firebase.createUserWithEmailAndPassword(
-                  email: enteredEmail, password: enteredPassword);
-          final storageRef = FirebaseStorage.instance
-              .ref()
-              .child('user_images')
-              .child('${userCredentials.user!.uid}.jpg');
-          await storageRef.putFile(selectedImage!);
-          final imageUrl = await storageRef.getDownloadURL();
-
-          final user = <String, dynamic>{
-            "username": enteredUsername,
-            "email": enteredEmail,
-            "image_url": imageUrl,
-          };
-
-          final db = FirebaseFirestore.instance;
-          db.collection('users').doc(userCredentials.user!.uid).set(user);
-        }
-      } on FirebaseAuthException catch (error) {
-        if (error.code == 'email-already-in-use') {}
-
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(error.message ?? 'Authentication failed.'),
-          ),
-        );
-        setState(() {
-          isAuthenticating = false;
-        });
-      }
-    }
-
     return Card(
       margin: const EdgeInsets.all(20),
       child: Padding(
@@ -93,17 +92,21 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
           bottom: 30,
         ),
         child: Form(
-          key: form,
+          key: _form,
           child: Column(
             children: [
               if (!widget.isLogin)
                 UserImagePicker(
                   onPickImage: (pickedImage) {
-                    selectedImage = pickedImage;
+                    _selectedImage = pickedImage;
                   },
                 ),
               if (!widget.isLogin)
                 TextFormField(
+                  onTapOutside: (_) {
+                    FocusScope.of(context)
+                        .requestFocus(FocusNode()); //remove focus
+                  },
                   decoration: const InputDecoration(
                     labelText: 'Full Name',
                   ),
@@ -119,10 +122,14 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
                     return null;
                   },
                   onSaved: (value) {
-                    enteredUsername = value!;
+                    _enteredUsername = value!;
                   },
                 ),
               TextFormField(
+                onTapOutside: (_) {
+                  FocusScope.of(context)
+                      .requestFocus(FocusNode()); //remove focus
+                },
                 decoration: const InputDecoration(
                   labelText: 'Email Address',
                 ),
@@ -138,10 +145,14 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
                   return null;
                 },
                 onSaved: (value) {
-                  enteredEmail = value!;
+                  _enteredEmail = value!;
                 },
               ),
               TextFormField(
+                onTapOutside: (_) {
+                  FocusScope.of(context)
+                      .requestFocus(FocusNode()); //remove focus
+                },
                 decoration: const InputDecoration(
                   labelText: 'Password',
                 ),
@@ -157,22 +168,22 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
                   return null;
                 },
                 onSaved: (value) {
-                  enteredPassword = value!;
+                  _enteredPassword = value!;
                 },
               ),
               const SizedBox(
                 height: 15,
               ),
-              if (isAuthenticating) const CircularProgressIndicator(),
-              if (!isAuthenticating)
-                ElevatedButton(
-                  onPressed: submit,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Theme.of(context).colorScheme.primaryContainer,
-                  ),
-                  child: Text(widget.isLogin ? 'Login' : 'Create Account'),
+              ElevatedButton(
+                onPressed: submit,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor:
+                      Theme.of(context).colorScheme.primaryContainer,
                 ),
+                child: _isAuthenticating
+                    ? const CircularProgressIndicator()
+                    : Text(widget.isLogin ? 'Login' : 'Create Account'),
+              ),
             ],
           ),
         ),
