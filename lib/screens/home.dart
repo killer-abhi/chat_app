@@ -5,7 +5,6 @@ import 'package:global_chat/screens/navigation_bar.dart';
 
 class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     // String? hello;
@@ -21,7 +20,7 @@ class Home extends StatelessWidget {
               child: Text('Something Went Wrong'),
             );
           } else if (snapshot.hasData) {
-            return const UserScreen();
+            return const NavigationScreen();
           } else {
             return const LoginScreen();
           }

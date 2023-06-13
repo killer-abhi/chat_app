@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -55,15 +56,17 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
             .child('${userCredentials.user!.uid}.jpg');
         await storageRef.putFile(_selectedImage!);
         final imageUrl = await storageRef.getDownloadURL();
-
+        var rdm = Random();
+        var newUserId = '100000000000000' + rdm.nextInt(999999).toString();
         final user = <String, dynamic>{
+          "userId": newUserId,
           "username": _enteredUsername,
           "email": _enteredEmail,
           "image_url": imageUrl,
         };
 
         final db = FirebaseFirestore.instance;
-        db.collection('users').doc(userCredentials.user!.uid).set(user);
+        db.collection('users').doc(newUserId).set(user);
       }
     } on FirebaseAuthException catch (error) {
       if (error.code == 'email-already-in-use') {}

@@ -21,8 +21,9 @@ class GoogleSignInProvider extends ChangeNotifier {
     );
 
     await FirebaseAuth.instance.signInWithCredential(credential);
-    print(_user);
+    print(_user!.id.length);
     final user = <String, dynamic>{
+      "userId": _user!.id,
       "username": _user!.displayName,
       "email": _user!.email,
       "image_url": _user!.photoUrl,

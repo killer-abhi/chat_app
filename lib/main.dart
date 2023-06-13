@@ -1,8 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:global_chat/providers/google_sign_in.dart';
 import 'package:global_chat/screens/home.dart';
-import 'package:global_chat/screens/login.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
