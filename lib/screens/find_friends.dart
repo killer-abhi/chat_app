@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:global_chat/screens/chat_screen.dart';
 
 class FindFriendsScreen extends StatefulWidget {
   const FindFriendsScreen({Key? key}) : super(key: key);
@@ -18,6 +19,12 @@ class _FindFriendsScreenState extends State<FindFriendsScreen> {
     setState(() {
       _searchText = _searchTextController.value.text;
     });
+  }
+
+  @override
+  void dispose() {
+    _searchTextController.dispose();
+    super.dispose();
   }
 
   @override
@@ -40,6 +47,11 @@ class _FindFriendsScreenState extends State<FindFriendsScreen> {
             child: Text('Something went wrong!'),
           );
         }
+
+        // _loadedUsers = userSnapshots.data!.docs;
+        // final fromUser = _loadedUsers
+        //     .where((item) => item.data()['email'] == _authenticatedUser.email)
+        //     .toList();
 
         _loadedUsers = userSnapshots.data!.docs
             .where((item) =>
@@ -115,7 +127,14 @@ class _FindFriendsScreenState extends State<FindFriendsScreen> {
                           icon: const Icon(Icons.add_call),
                         ),
                         IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (ctx) => ChatScreen(
+                                toUser: user,
+                                // fromUser: fromUser,
+                              ),
+                            ));
+                          },
                           icon: const Icon(Icons.receipt),
                         ),
                         IconButton(

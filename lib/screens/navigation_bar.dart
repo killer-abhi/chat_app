@@ -55,12 +55,12 @@ class _NavigationScreenState extends State<NavigationScreen>
                     setState(() {
                       _isDeleting = true;
                     });
-                    FirebaseAuth.instance.signOut();
                     await _deleteAppDir();
                     await _deleteCacheDir();
                     setState(() {
                       _isDeleting = false;
                     });
+                    FirebaseAuth.instance.signOut();
                   },
                   icon: const Icon(Icons.logout),
                   label: const Text('Logout'),

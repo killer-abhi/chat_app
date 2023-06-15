@@ -8,6 +8,7 @@ class GoogleSignInProvider extends ChangeNotifier {
   GoogleSignInAccount? _user;
 
   GoogleSignInAccount get user => _user!;
+  dynamic get currentUser => getUserDetails();
   Future googleLogin() async {
     final googleUser = await googleSignIn.signIn();
     if (googleUser == null) return;
@@ -21,7 +22,6 @@ class GoogleSignInProvider extends ChangeNotifier {
     );
 
     await FirebaseAuth.instance.signInWithCredential(credential);
-    print(_user!.id.length);
     final user = <String, dynamic>{
       "userId": _user!.id,
       "username": _user!.displayName,
@@ -30,7 +30,16 @@ class GoogleSignInProvider extends ChangeNotifier {
     };
 
     final db = FirebaseFirestore.instance;
-    db.collection('users').doc(_user!.id).set(user);
+    db.collection('users').doc(_user!.email).set(user);
     notifyListeners();
+  }
+
+  dynamic getUserDetails() async {
+    final user = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.email)
+        .get();
+
+    return user;
   }
 }

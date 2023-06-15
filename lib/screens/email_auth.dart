@@ -49,7 +49,9 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
             email: _enteredEmail, password: _enteredPassword);
       } else {
         final userCredentials = await _firebase.createUserWithEmailAndPassword(
-            email: _enteredEmail, password: _enteredPassword);
+          email: _enteredEmail,
+          password: _enteredPassword,
+        );
         final storageRef = FirebaseStorage.instance
             .ref()
             .child('user_images')
@@ -66,7 +68,7 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
         };
 
         final db = FirebaseFirestore.instance;
-        db.collection('users').doc(newUserId).set(user);
+        db.collection('users').doc(_enteredEmail).set(user);
       }
     } on FirebaseAuthException catch (error) {
       if (error.code == 'email-already-in-use') {}
@@ -177,16 +179,16 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
               const SizedBox(
                 height: 15,
               ),
-              ElevatedButton(
-                onPressed: submit,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      Theme.of(context).colorScheme.primaryContainer,
+              if (_isAuthenticating) const CircularProgressIndicator(),
+              if (!_isAuthenticating)
+                ElevatedButton(
+                  onPressed: submit,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        Theme.of(context).colorScheme.primaryContainer,
+                  ),
+                  child: Text(widget.isLogin ? 'Login' : 'Create Account'),
                 ),
-                child: _isAuthenticating
-                    ? const CircularProgressIndicator()
-                    : Text(widget.isLogin ? 'Login' : 'Create Account'),
-              ),
             ],
           ),
         ),
