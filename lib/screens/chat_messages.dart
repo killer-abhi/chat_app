@@ -41,6 +41,7 @@ class ChatMessages extends StatelessWidget {
 
         final loadedMessages = chatSnapshots.data!.docs;
         return ListView.builder(
+          physics: const BouncingScrollPhysics(),
           padding: const EdgeInsets.only(
             left: 13,
             right: 13,

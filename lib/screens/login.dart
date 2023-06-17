@@ -1,8 +1,6 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:global_chat/screens/email_auth.dart';
 import 'package:global_chat/widgets/google_login.dart';
-import 'package:global_chat/widgets/user_image_picker.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);

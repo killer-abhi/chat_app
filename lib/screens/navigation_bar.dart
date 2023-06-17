@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:global_chat/providers/add_new_user.dart';
 import 'package:global_chat/screens/find_friends.dart';
 import 'package:global_chat/screens/global_chat.dart';
 import 'package:global_chat/screens/recent_chats.dart';
@@ -20,19 +21,31 @@ class _NavigationScreenState extends State<NavigationScreen>
   var _isDeleting = false;
 
   Future<void> _deleteCacheDir() async {
-    final cacheDir = await getTemporaryDirectory();
-    print(cacheDir.stat());
-    if (cacheDir.existsSync()) {
-      cacheDir.deleteSync(recursive: true);
+    var tempDir = await getTemporaryDirectory();
+
+    if (tempDir.existsSync()) {
+      tempDir.deleteSync(recursive: true);
     }
   }
 
   Future<void> _deleteAppDir() async {
-    final appDir = await getApplicationSupportDirectory();
+    var appDocDir = await getApplicationDocumentsDirectory();
 
-    if (appDir.existsSync()) {
-      appDir.deleteSync(recursive: true);
+    if (appDocDir.existsSync()) {
+      appDocDir.deleteSync(recursive: true);
     }
+  }
+
+  void logout() async {
+    setState(() {
+      _isDeleting = true;
+    });
+    await _deleteAppDir();
+    await _deleteCacheDir();
+    FirebaseAuth.instance.signOut();
+    setState(() {
+      _isDeleting = true;
+    });
   }
 
   @override
@@ -51,17 +64,7 @@ class _NavigationScreenState extends State<NavigationScreen>
           _isDeleting
               ? const CircularProgressIndicator()
               : TextButton.icon(
-                  onPressed: () async {
-                    setState(() {
-                      _isDeleting = true;
-                    });
-                    await _deleteAppDir();
-                    await _deleteCacheDir();
-                    setState(() {
-                      _isDeleting = false;
-                    });
-                    FirebaseAuth.instance.signOut();
-                  },
+                  onPressed: logout,
                   icon: const Icon(Icons.logout),
                   label: const Text('Logout'),
                 ),

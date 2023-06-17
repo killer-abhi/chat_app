@@ -135,7 +135,7 @@ class _FindFriendsScreenState extends State<FindFriendsScreen> {
                               ),
                             ));
                           },
-                          icon: const Icon(Icons.receipt),
+                          icon: const Icon(Icons.message_rounded),
                         ),
                         IconButton(
                           onPressed: () {},

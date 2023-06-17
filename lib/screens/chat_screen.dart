@@ -14,7 +14,7 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  var _currentUser;
+  dynamic _currentUser;
 
   void getDetails() async {
     final provider = Provider.of<GoogleSignInProvider>(context, listen: false);
