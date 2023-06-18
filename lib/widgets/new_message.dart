@@ -37,8 +37,14 @@ class _NewMessageState extends State<NewMessage> {
         'message': enteredMessage,
         'createdAt': Timestamp.now(),
         'fromUserId': widget.fromUser['userId'],
+        'fromUserEmail': widget.fromUser['email'],
         'fromUsername': widget.fromUser['username'],
-        'userImage': widget.fromUser['image_url'],
+        'fromUserImage': widget.fromUser['image_url'],
+        'toUserImage': widget.toUser == 'globalUser'
+            ? 'global'
+            : widget.toUser['image_url'],
+        'toUserEmail':
+            widget.toUser == 'globalUser' ? 'global' : widget.toUser['email'],
         'toUserId':
             widget.toUser == 'globalUser' ? 'global' : widget.toUser['userId'],
         'toUsername': widget.toUser == 'globalUser'
@@ -54,6 +60,18 @@ class _NewMessageState extends State<NewMessage> {
       await FirebaseFirestore.instance
           .collection(collectionName.toString())
           .add(newChatMessage);
+
+      if (widget.toUser != 'globalUser') {
+        await FirebaseFirestore.instance
+            .collection(widget.fromUser['email'])
+            .doc(widget.toUser['userId'])
+            .set(newChatMessage);
+
+        await FirebaseFirestore.instance
+            .collection(widget.toUser['email'])
+            .doc(widget.fromUser['userId'])
+            .set(newChatMessage);
+      }
     }
 
     return Padding(

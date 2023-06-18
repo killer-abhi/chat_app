@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:global_chat/screens/email_auth.dart';
+import 'package:global_chat/auth/email_auth.dart';
 import 'package:global_chat/widgets/google_login.dart';
 
 class LoginScreen extends StatefulWidget {

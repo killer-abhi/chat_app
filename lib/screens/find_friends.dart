@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:global_chat/screens/chat_screen.dart';
 
@@ -84,6 +85,9 @@ class _FindFriendsScreenState extends State<FindFriendsScreen> {
             ),
           ),
           body: GridView.builder(
+            physics: const BouncingScrollPhysics(),
+            addAutomaticKeepAlives: true,
+            dragStartBehavior: DragStartBehavior.down,
             padding: const EdgeInsets.all(10),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,

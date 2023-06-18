@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:global_chat/widgets/message_bubble.dart';
 
@@ -42,6 +43,8 @@ class ChatMessages extends StatelessWidget {
         final loadedMessages = chatSnapshots.data!.docs;
         return ListView.builder(
           physics: const BouncingScrollPhysics(),
+          addAutomaticKeepAlives: true,
+          dragStartBehavior: DragStartBehavior.down,
           padding: const EdgeInsets.only(
             left: 13,
             right: 13,
@@ -61,14 +64,15 @@ class ChatMessages extends StatelessWidget {
 
             if (nextUserIsSame) {
               return MessageBubble.next(
-                  isGlobalMessage: toUser == 'globalUser',
-                  message: chatMessage['message'],
-                  isMe: fromUser['userId'] == currentMessageUserId);
+                isGlobalMessage: toUser == 'globalUser',
+                message: chatMessage['message'],
+                isMe: fromUser['userId'] == currentMessageUserId,
+              );
             } else {
               return MessageBubble.first(
                 isGlobalMessage: toUser == 'globalUser',
-                userImage: chatMessage['userImage'],
-                username: chatMessage['username'],
+                userImage: chatMessage['fromUserImage'],
+                username: chatMessage['fromUsername'],
                 message: chatMessage['message'],
                 isMe: fromUser['userId'] == currentMessageUserId,
               );

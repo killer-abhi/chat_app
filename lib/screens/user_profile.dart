@@ -38,13 +38,14 @@ class _UserProfileScreen extends State<UserProfileScreen> {
   }
 
   dynamic _currentUser;
-
   void getDetails() async {
     final provider = Provider.of<GoogleSignInProvider>(context, listen: false);
     dynamic userDetails = await provider.currentUser;
-    setState(() {
-      _currentUser = userDetails.data();
-    });
+    if (mounted) {
+      setState(() {
+        _currentUser = userDetails.data();
+      });
+    }
     _imageWidget =
         _currentUser != null ? NetworkImage(_currentUser['image_url']) : null;
   }
@@ -92,12 +93,6 @@ class _UserProfileScreen extends State<UserProfileScreen> {
   }
 
   @override
-  void dispose() {
-    _userNameController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     _userNameController.text =
         _currentUser == null ? '' : _currentUser['username'];
@@ -126,29 +121,32 @@ class _UserProfileScreen extends State<UserProfileScreen> {
                     label: const Text('Change Photo'),
                   ),
                   const SizedBox(height: 10),
-                  TextField(
-                    controller: _userNameController,
-                    readOnly: _isEditing,
-                    autofocus: !_isEditing,
-                    onTapOutside: (_) {
-                      FocusScope.of(context).requestFocus(FocusNode());
-                    },
-                    decoration: InputDecoration(
-                      labelText: 'Username',
-                      contentPadding: const EdgeInsets.all(10),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
+                  Container(
+                    height: 50,
+                    child: TextField(
+                      controller: _userNameController,
+                      readOnly: _isEditing,
+                      autofocus: !_isEditing,
+                      onTapOutside: (_) {
+                        FocusScope.of(context).requestFocus(FocusNode());
+                      },
+                      decoration: InputDecoration(
+                        labelText: 'Username',
+                        contentPadding: const EdgeInsets.all(10),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        suffix: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _isEditing = false;
+                            });
+                          },
+                          icon: const Icon(Icons.edit_rounded),
+                        ),
                       ),
-                      suffix: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            _isEditing = false;
-                          });
-                        },
-                        icon: const Icon(Icons.edit_rounded),
-                      ),
+                      style: const TextStyle(fontSize: 18),
                     ),
-                    style: const TextStyle(fontSize: 18),
                   ),
                   const SizedBox(height: 20),
                   TextFormField(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:global_chat/providers/google_sign_in.dart';
-import 'package:global_chat/screens/chat_messages.dart';
+import 'package:global_chat/widgets/chat_messages.dart';
 import 'package:global_chat/widgets/new_message.dart';
 import 'package:provider/provider.dart';
 
@@ -33,6 +33,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     final dynamic toUser = widget.toUser;
+    print(toUser);
     return Scaffold(
       appBar: toUser != 'globalUser'
           ? AppBar(
@@ -65,7 +66,7 @@ class _ChatScreenState extends State<ChatScreen> {
           if (_currentUser != null)
             Expanded(
               child: ChatMessages(
-                toUser: widget.toUser,
+                toUser: toUser,
                 fromUser: _currentUser,
               ),
             ),

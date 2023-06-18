@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:global_chat/providers/add_new_user.dart';
 import 'package:global_chat/screens/find_friends.dart';
 import 'package:global_chat/screens/global_chat.dart';
 import 'package:global_chat/screens/recent_chats.dart';
@@ -90,6 +89,7 @@ class _NavigationScreenState extends State<NavigationScreen>
         ),
       ),
       body: TabBarView(
+        physics: const BouncingScrollPhysics(),
         controller: _tabController,
         children: const [
           RecentChatsScreen(),
@@ -98,11 +98,6 @@ class _NavigationScreenState extends State<NavigationScreen>
           UserProfileScreen(),
         ],
       ),
-      // floatingActionButton: ElevatedButton.icon(
-      //   onPressed: () {},
-      //   icon: const Icon(Icons.start),
-      //   label: const Text('Chat'),
-      // ),
     );
   }
 }
