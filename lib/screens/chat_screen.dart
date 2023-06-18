@@ -19,9 +19,11 @@ class _ChatScreenState extends State<ChatScreen> {
   void getDetails() async {
     final provider = Provider.of<GoogleSignInProvider>(context, listen: false);
     dynamic userDetails = await provider.currentUser;
-    setState(() {
-      _currentUser = userDetails.data();
-    });
+    if (mounted) {
+      setState(() {
+        _currentUser = userDetails.data();
+      });
+    }
   }
 
   @override

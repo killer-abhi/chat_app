@@ -24,37 +24,43 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (!_isEmailSignUp || _isLogin)
-                Container(
+                // Container(
+                //   height: 150,
+                //   width: 150,
+                //   child: Image.asset('assets/images/logo.png'),
+                // ),
+                Image.asset(
+                  'assets/images/logo.png',
                   height: 150,
                   width: 150,
-                  color: Theme.of(context).colorScheme.secondary,
                 ),
               if (_isLogin || _isEmailSignUp)
                 EmailAuthScreen(
                   isLogin: _isLogin,
                   isEmailSignUp: _isEmailSignUp,
                 ),
-              if (!_isLogin && !_isEmailSignUp)
-                Card(
-                  margin: const EdgeInsets.only(
-                    top: 30,
-                    left: 20,
-                    right: 20,
-                    bottom: 0,
-                  ),
-                  child: TextButton(
-                    onPressed: () {
-                      setState(() {
-                        _isEmailSignUp = true;
-                      });
-                    },
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.black,
-                      minimumSize: const Size(double.infinity, 50),
-                    ),
-                    child: const Text('Email and Password'),
-                  ),
-                ),
+              // if (!_isLogin && !_isEmailSignUp)
+              //   Card(
+              //     margin: const EdgeInsets.only(
+              //       top: 30,
+              //       left: 20,
+              //       right: 20,
+              //       bottom: 0,
+              //     ),
+              //     child: TextButton(
+              //       onPressed: () {
+              //         setState(() {
+              //           _isEmailSignUp = true;
+              //         });
+              //       },
+              //       style: ElevatedButton.styleFrom(
+              //         foregroundColor: Colors.black,
+              //         minimumSize: const Size(double.infinity, 50),
+              //       ),
+              //       child: const Text('Email and Password'),
+              //     ),
+              //   ),
+              // if (_isLogin)
               GoogleLogin(
                 isLogin: _isLogin,
               ),
@@ -69,9 +75,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       onPressed: () {
                         setState(() {
                           _isLogin = !_isLogin;
-                          if (_isEmailSignUp) {
-                            _isEmailSignUp = !_isEmailSignUp;
-                          }
+                          _isEmailSignUp = true;
+                          // if (_isEmailSignUp) {
+                          //   _isEmailSignUp = !_isEmailSignUp;
+                          // }
                         });
                       },
                       child: Text(_isLogin ? 'SignUp' : 'Login'),

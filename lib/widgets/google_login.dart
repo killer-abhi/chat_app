@@ -28,7 +28,14 @@ class _GoogleLoginState extends State<GoogleLogin> {
   @override
   Widget build(BuildContext context) {
     return _isAuthenticating
-        ? const CircularProgressIndicator()
+        ? Column(
+            children: const [
+              SizedBox(
+                height: 20,
+              ),
+              CircularProgressIndicator(),
+            ],
+          )
         : Card(
             margin: const EdgeInsets.all(20),
             child: TextButton.icon(
@@ -39,10 +46,9 @@ class _GoogleLoginState extends State<GoogleLogin> {
               ),
               icon: const FaIcon(
                 FontAwesomeIcons.google,
-                color: Colors.red,
+                color: Colors.purple,
               ),
-              label: Text(
-                  widget.isLogin ? 'SignIn with Google' : 'SignUp with Google'),
+              label: const Text('Continue with Google'),
             ),
           );
   }

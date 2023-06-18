@@ -96,7 +96,6 @@ class _UserProfileScreen extends State<UserProfileScreen> {
   Widget build(BuildContext context) {
     _userNameController.text =
         _currentUser == null ? '' : _currentUser['username'];
-
     return Padding(
       padding: const EdgeInsets.all(20),
       child: _currentUser == null
