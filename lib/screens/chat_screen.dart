@@ -33,7 +33,6 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     final dynamic toUser = widget.toUser;
-    print(toUser);
     return Scaffold(
       appBar: toUser != 'globalUser'
           ? AppBar(

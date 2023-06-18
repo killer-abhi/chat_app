@@ -37,19 +37,8 @@ class _NewMessageState extends State<NewMessage> {
         'message': enteredMessage,
         'createdAt': Timestamp.now(),
         'fromUserId': widget.fromUser['userId'],
-        'fromUserEmail': widget.fromUser['email'],
-        'fromUsername': widget.fromUser['username'],
-        'fromUserImage': widget.fromUser['image_url'],
-        'toUserImage': widget.toUser == 'globalUser'
-            ? 'global'
-            : widget.toUser['image_url'],
-        'toUserEmail':
-            widget.toUser == 'globalUser' ? 'global' : widget.toUser['email'],
         'toUserId':
             widget.toUser == 'globalUser' ? 'global' : widget.toUser['userId'],
-        'toUsername': widget.toUser == 'globalUser'
-            ? 'global'
-            : widget.toUser['username'],
       };
 
       final collectionName = widget.toUser == 'globalUser'
@@ -59,18 +48,31 @@ class _NewMessageState extends State<NewMessage> {
 
       await FirebaseFirestore.instance
           .collection(collectionName.toString())
-          .add(newChatMessage);
+          .add({
+        ...newChatMessage,
+        'fromUserImage': widget.fromUser['image_url'],
+        'fromUsername': widget.fromUser['username'],
+      });
 
       if (widget.toUser != 'globalUser') {
         await FirebaseFirestore.instance
             .collection(widget.fromUser['email'])
-            .doc(widget.toUser['userId'])
-            .set(newChatMessage);
-
+            .doc(widget.toUser['email'])
+            .set({
+          ...newChatMessage,
+          'toUserImage': widget.toUser['image_url'],
+          'toUsername': widget.toUser['username'],
+          'toUserEmail': widget.toUser['email'],
+        });
         await FirebaseFirestore.instance
             .collection(widget.toUser['email'])
-            .doc(widget.fromUser['userId'])
-            .set(newChatMessage);
+            .doc(widget.fromUser['email'])
+            .set({
+          ...newChatMessage,
+          'toUserImage': widget.fromUser['image_url'],
+          'toUsername': widget.fromUser['username'],
+          'toUserEmail': widget.fromUser['email'],
+        });
       }
     }
 

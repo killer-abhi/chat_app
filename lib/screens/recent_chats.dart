@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:global_chat/providers/google_sign_in.dart';
@@ -77,6 +76,12 @@ class _RecentChatsScreenState extends State<RecentChatsScreen> {
                   itemBuilder: (context, index) {
                     final user = recentChats[index].data();
                     final isSent = _currentUser['userId'] == user['fromUserId'];
+                    var toUserId;
+                    if (isSent) {
+                      toUserId = user['toUserId'];
+                    } else {
+                      toUserId = user['fromUserId'];
+                    }
                     var message = user['message'].toString();
                     if (message.length > 20) {
                       message = '${message.substring(0, 19)} ...';
@@ -111,11 +116,15 @@ class _RecentChatsScreenState extends State<RecentChatsScreen> {
                           children: [
                             Text(
                               isSent ? 'Sent -' : 'Received -',
+                              style: const TextStyle(color: Colors.purple),
+                            ),
+                            Text(
+                              message,
                               style: TextStyle(
-                                color: Theme.of(context).colorScheme.secondary,
+                                color:
+                                    Theme.of(context).colorScheme.surfaceTint,
                               ),
                             ),
-                            Text(message),
                           ],
                         ),
                         horizontalTitleGap: 20,
@@ -124,7 +133,7 @@ class _RecentChatsScreenState extends State<RecentChatsScreen> {
                           final toUser = {
                             'image_url': user['toUserImage'],
                             'username': user['toUsername'],
-                            'userId': user['toUserId'],
+                            'userId': toUserId,
                             'email': user['toUserEmail'],
                           };
                           Navigator.of(context).push(MaterialPageRoute(
@@ -146,8 +155,14 @@ class _RecentChatsScreenState extends State<RecentChatsScreen> {
                               : null,
                         ),
                         trailing: Padding(
-                          padding: const EdgeInsets.only(top: 15, right: 20),
-                          child: Text(timeText),
+                          padding: const EdgeInsets.only(top: 15),
+                          child: Text(
+                            timeText,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          ),
                         ),
                       ),
                     );
