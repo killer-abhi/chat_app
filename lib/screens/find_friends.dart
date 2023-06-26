@@ -107,17 +107,20 @@ class _FindFriendsScreenState extends State<FindFriendsScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    CircleAvatar(
-                      radius: 40,
-                      foregroundImage: user['image_url'] != null
-                          ? NetworkImage(user['image_url'])
-                          : null,
-                      child: user['image_url'] == null
-                          ? Text(
-                              user['username'][0],
-                              style: const TextStyle(fontSize: 36),
-                            )
-                          : null,
+                    Hero(
+                      tag: user,
+                      child: CircleAvatar(
+                        radius: 40,
+                        foregroundImage: user['image_url'] != null
+                            ? NetworkImage(user['image_url'])
+                            : null,
+                        child: user['image_url'] == null
+                            ? Text(
+                                user['username'][0],
+                                style: const TextStyle(fontSize: 36),
+                              )
+                            : null,
+                      ),
                     ),
                     Text(
                       user['username'],

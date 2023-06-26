@@ -18,6 +18,7 @@ class _UserProfileScreen extends State<UserProfileScreen> {
   var _isUpdating = false;
   var _isEditing = true;
   var _imageWidget;
+  var _enteredUsername = '';
   final _userNameController = TextEditingController();
 
   File? _pickedImage;
@@ -26,7 +27,7 @@ class _UserProfileScreen extends State<UserProfileScreen> {
     final pickedImage = await ImagePicker().pickImage(
       source: ImageSource.gallery,
       imageQuality: 100,
-      maxWidth: 200,
+      maxHeight: 300,
     );
     if (pickedImage == null) {
       return;
@@ -44,6 +45,8 @@ class _UserProfileScreen extends State<UserProfileScreen> {
     if (mounted) {
       setState(() {
         _currentUser = userDetails.data();
+        _enteredUsername = _currentUser['username'];
+        _userNameController.text = _enteredUsername;
       });
     }
     _imageWidget =
@@ -93,9 +96,13 @@ class _UserProfileScreen extends State<UserProfileScreen> {
   }
 
   @override
+  void dispose() {
+    _userNameController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    _userNameController.text =
-        _currentUser == null ? '' : _currentUser['username'];
     return Padding(
       padding: const EdgeInsets.all(20),
       child: _currentUser == null
@@ -116,7 +123,7 @@ class _UserProfileScreen extends State<UserProfileScreen> {
                   ),
                   TextButton.icon(
                     onPressed: _pickImage,
-                    icon: const Icon(Icons.add_a_photo),
+                    icon: const Icon(Icons.photo_library),
                     label: const Text('Change Photo'),
                   ),
                   const SizedBox(height: 10),
@@ -163,19 +170,19 @@ class _UserProfileScreen extends State<UserProfileScreen> {
                   Row(
                     children: [
                       const Spacer(),
-                      _isUpdating
-                          ? const CircularProgressIndicator()
-                          : ElevatedButton.icon(
-                              style: ButtonStyle(
-                                  shape: MaterialStateProperty.all<
-                                          RoundedRectangleBorder>(
-                                      RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ))),
-                              onPressed: _updateData,
-                              icon: const Icon(Icons.update),
-                              label: const Text('Update Profile'),
-                            ),
+                      ElevatedButton.icon(
+                        style: ButtonStyle(
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ))),
+                        onPressed: _updateData,
+                        icon: _isUpdating
+                            ? const Icon(Icons.change_circle)
+                            : const Icon(Icons.restart_alt_rounded),
+                        label: Text(
+                            _isUpdating ? 'Updating ...' : 'Update Profile'),
+                      ),
                     ],
                   ),
                 ],

@@ -71,7 +71,6 @@ class _NewMessageState extends State<NewMessage> {
           ...newChatMessage,
           'toUserImage': widget.fromUser['image_url'],
           'toUsername': widget.fromUser['username'],
-          'toUserEmail': widget.fromUser['email'],
         });
       }
     }

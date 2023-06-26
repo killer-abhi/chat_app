@@ -90,12 +90,21 @@ class _RecentChatsScreenState extends State<RecentChatsScreen> {
                         (user['createdAt'].seconds) * 1000);
 
                     final now = DateTime.now();
-                    var timeDiff = now.difference(messageTime).inDays;
-                    var timeText = '$timeDiff days ago';
+                    var timeDiff = now.difference(messageTime).inMinutes;
+                    var timeText = '$timeDiff minutes';
                     if (timeDiff == 0) {
-                      timeText = 'Today';
-                    } else if (timeDiff == 1) {
-                      timeText = 'Yesterday';
+                      timeText = 'now';
+                    } else if (timeDiff > 60) {
+                      var hours = (timeDiff ~/ 60).toInt();
+                      timeText = '$hours hours';
+                      if (hours > 24) {
+                        var days = (hours ~/ 24).toInt();
+                        if (days == 1) {
+                          timeText = 'Yesterday';
+                        } else {
+                          timeText = '$days days';
+                        }
+                      }
                     }
                     return Card(
                       child: ListTile(
@@ -115,7 +124,7 @@ class _RecentChatsScreenState extends State<RecentChatsScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              isSent ? 'Sent -' : 'Received -',
+                              isSent ? 'You Sent -' : 'Received -',
                               style: const TextStyle(color: Colors.purple),
                             ),
                             Text(
@@ -154,7 +163,7 @@ class _RecentChatsScreenState extends State<RecentChatsScreen> {
                                 )
                               : null,
                         ),
-                        trailing: Padding(
+                        trailing: Container(
                           padding: const EdgeInsets.only(top: 15),
                           child: Text(
                             timeText,

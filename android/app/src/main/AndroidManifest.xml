@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.global_chat">
    <application
-        android:label="Global Chat"
+        android:label="ChatWave"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

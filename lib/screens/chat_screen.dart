@@ -41,18 +41,21 @@ class _ChatScreenState extends State<ChatScreen> {
               leadingWidth: 30,
               backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
               title: ListTile(
-                leading: CircleAvatar(
-                  radius: 25,
-                  backgroundColor: Theme.of(context).colorScheme.onSecondary,
-                  foregroundImage: toUser['image_url'] != null
-                      ? NetworkImage(toUser['image_url'])
-                      : null,
-                  child: toUser['image_url'] == null
-                      ? Text(
-                          toUser['username'][0],
-                          style: const TextStyle(fontSize: 30),
-                        )
-                      : null,
+                leading: Hero(
+                  tag: toUser,
+                  child: CircleAvatar(
+                    radius: 25,
+                    backgroundColor: Theme.of(context).colorScheme.onSecondary,
+                    foregroundImage: toUser['image_url'] != null
+                        ? NetworkImage(toUser['image_url'])
+                        : null,
+                    child: toUser['image_url'] == null
+                        ? Text(
+                            toUser['username'][0],
+                            style: const TextStyle(fontSize: 30),
+                          )
+                        : null,
+                  ),
                 ),
                 title: Text(toUser['username']),
                 trailing: IconButton(
