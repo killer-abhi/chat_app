@@ -1,19 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:global_chat/models/message.dart';
+import 'package:global_chat/models/user.dart';
 
 class NewMessage extends StatefulWidget {
   const NewMessage({Key? key, required this.toUser, required this.fromUser})
       : super(key: key);
-  final dynamic toUser;
-  final dynamic fromUser;
+  final User toUser;
+  final User fromUser;
   @override
   State<NewMessage> createState() => _NewMessageState();
 }
 
 class _NewMessageState extends State<NewMessage> {
-  // _NewMessageState({required this.toUser});
-  // final dynamic toUser;
-
   final _messageController = TextEditingController();
 
   @override
@@ -33,45 +32,31 @@ class _NewMessageState extends State<NewMessage> {
       _messageController.clear();
       FocusScope.of(context).unfocus();
 
-      final newChatMessage = {
-        'message': enteredMessage,
-        'createdAt': Timestamp.now(),
-        'fromUserId': widget.fromUser['userId'],
-        'toUserId':
-            widget.toUser == 'globalUser' ? 'global' : widget.toUser['userId'],
-      };
+      final newMessage = Message(
+          message: enteredMessage,
+          fromUser: widget.fromUser.email,
+          fromUserName: widget.fromUser.userName,
+          toUser: widget.toUser.email,
+          fromUserImageUrl: widget.fromUser.imageUrl,
+          createdAt: Timestamp.now());
 
-      final collectionName = widget.toUser == 'globalUser'
+      final collectionName = widget.toUser.email == 'globalUser'
           ? 'globalChat'
-          : BigInt.parse(widget.toUser['userId']) +
-              BigInt.parse(widget.fromUser['userId']);
+          : widget.fromUser.email;
 
       await FirebaseFirestore.instance
           .collection(collectionName.toString())
-          .add({
-        ...newChatMessage,
-        'fromUserImage': widget.fromUser['image_url'],
-        'fromUsername': widget.fromUser['username'],
-      });
+          .add(newMessage.getMap());
 
-      if (widget.toUser != 'globalUser') {
+      if (widget.toUser.email != 'globalUser') {
         await FirebaseFirestore.instance
-            .collection(widget.fromUser['email'])
-            .doc(widget.toUser['email'])
-            .set({
-          ...newChatMessage,
-          'toUserImage': widget.toUser['image_url'],
-          'toUsername': widget.toUser['username'],
-          'toUserEmail': widget.toUser['email'],
-        });
+            .collection(widget.toUser.email)
+            .doc(widget.fromUser.email)
+            .set(newMessage.getMap());
         await FirebaseFirestore.instance
-            .collection(widget.toUser['email'])
-            .doc(widget.fromUser['email'])
-            .set({
-          ...newChatMessage,
-          'toUserImage': widget.fromUser['image_url'],
-          'toUsername': widget.fromUser['username'],
-        });
+            .collection(widget.toUser.email)
+            .doc(widget.toUser.email)
+            .set(newMessage.getMap());
       }
     }
 

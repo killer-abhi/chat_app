@@ -1,86 +1,90 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:global_chat/providers/google_sign_in.dart';
+import 'package:global_chat/models/user.dart' as account;
 import 'package:global_chat/widgets/chat_messages.dart';
 import 'package:global_chat/widgets/new_message.dart';
-import 'package:provider/provider.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key, required this.toUser}) : super(key: key);
-  final dynamic toUser;
-  // final dynamic fromUser;
-
+  final account.User toUser;
   @override
   State<ChatScreen> createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  dynamic _currentUser;
-
-  void getDetails() async {
-    final provider = Provider.of<GoogleSignInProvider>(context, listen: false);
-    dynamic userDetails = await provider.currentUser;
-    if (mounted) {
-      setState(() {
-        _currentUser = userDetails.data();
-      });
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getDetails();
+  Future<DocumentSnapshot> getCurrentUser() async {
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.email)
+        .get();
+    return doc;
   }
 
   @override
   Widget build(BuildContext context) {
-    final dynamic toUser = widget.toUser;
-    return Scaffold(
-      appBar: toUser != 'globalUser'
-          ? AppBar(
-              leadingWidth: 30,
-              backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-              title: ListTile(
-                leading: Hero(
-                  tag: toUser,
-                  child: CircleAvatar(
-                    radius: 25,
-                    backgroundColor: Theme.of(context).colorScheme.onSecondary,
-                    foregroundImage: toUser['image_url'] != null
-                        ? NetworkImage(toUser['image_url'])
-                        : null,
-                    child: toUser['image_url'] == null
-                        ? Text(
-                            toUser['username'][0],
-                            style: const TextStyle(fontSize: 30),
-                          )
-                        : null,
+    final account.User toUser = widget.toUser;
+    return FutureBuilder<DocumentSnapshot>(
+        future: getCurrentUser(),
+        builder: (BuildContext context, docSnapshot) {
+          if (docSnapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else {
+            final fromUser = account.User(
+                email: docSnapshot.data!.get('email'),
+                imageUrl: docSnapshot.data!.get('imageUrl'),
+                userId: docSnapshot.data!.get('userId'),
+                userName: docSnapshot.data!.get('userName'));
+            return Scaffold(
+              appBar: toUser.email != 'globalUser'
+                  ? AppBar(
+                      leadingWidth: 30,
+                      backgroundColor:
+                          Theme.of(context).colorScheme.secondaryContainer,
+                      title: ListTile(
+                        leading: Hero(
+                          tag: toUser.email,
+                          child: CircleAvatar(
+                            radius: 25,
+                            backgroundColor:
+                                Theme.of(context).colorScheme.onSecondary,
+                            foregroundImage: toUser.imageUrl != 'globalUser'
+                                ? NetworkImage(toUser.imageUrl)
+                                : null,
+                            child: toUser.imageUrl == 'globalUser'
+                                ? Text(
+                                    toUser.userName[0],
+                                    style: const TextStyle(fontSize: 30),
+                                  )
+                                : null,
+                          ),
+                        ),
+                        title: Text(toUser.userName),
+                        trailing: IconButton(
+                          onPressed: () {},
+                          icon: const Icon(Icons.add_call),
+                        ),
+                      ),
+                    )
+                  : null,
+              body: Column(
+                children: [
+                  Expanded(
+                    child: ChatMessages(
+                      toUser: toUser,
+                      fromUser: fromUser,
+                    ),
                   ),
-                ),
-                title: Text(toUser['username']),
-                trailing: IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.add_call),
-                ),
+                  NewMessage(
+                    toUser: toUser,
+                    fromUser: fromUser,
+                  ),
+                ],
               ),
-            )
-          : null,
-      body: Column(
-        children: [
-          if (_currentUser != null)
-            Expanded(
-              child: ChatMessages(
-                toUser: toUser,
-                fromUser: _currentUser,
-              ),
-            ),
-          if (_currentUser != null)
-            NewMessage(
-              toUser: toUser,
-              fromUser: _currentUser,
-            ),
-        ],
-      ),
-    );
+            );
+          }
+        });
   }
 }

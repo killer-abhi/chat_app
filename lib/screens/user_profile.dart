@@ -45,16 +45,16 @@ class _UserProfileScreen extends State<UserProfileScreen> {
     if (mounted) {
       setState(() {
         _currentUser = userDetails.data();
-        _enteredUsername = _currentUser['username'];
+        _enteredUsername = _currentUser['userName'];
         _userNameController.text = _enteredUsername;
       });
     }
     _imageWidget =
-        _currentUser != null ? NetworkImage(_currentUser['image_url']) : null;
+        _currentUser != null ? NetworkImage(_currentUser['imageUrl']) : null;
   }
 
   void _updateData() async {
-    if (_currentUser['username'] == _userNameController.text &&
+    if (_currentUser['userName'] == _userNameController.text &&
         _pickedImage == null) {
       return;
     }
@@ -73,7 +73,7 @@ class _UserProfileScreen extends State<UserProfileScreen> {
           .doc(_currentUser['email'])
           .set({
         ..._currentUser,
-        'image_url': imageUrl,
+        'imageUrl': imageUrl,
       });
     } else {
       await FirebaseFirestore.instance
@@ -81,7 +81,7 @@ class _UserProfileScreen extends State<UserProfileScreen> {
           .doc(_currentUser['email'])
           .set({
         ..._currentUser,
-        'username': _userNameController.text,
+        'userName': _userNameController.text,
       });
     }
     setState(() {
@@ -114,9 +114,9 @@ class _UserProfileScreen extends State<UserProfileScreen> {
                     radius: 80,
                     backgroundColor: Colors.purple,
                     foregroundImage: _imageWidget,
-                    child: _currentUser['image_url'] == null
+                    child: _currentUser['imageUrl'] == null
                         ? Text(
-                            _currentUser['username'][0],
+                            _currentUser['userName'][0],
                             style: const TextStyle(fontSize: 36),
                           )
                         : null,

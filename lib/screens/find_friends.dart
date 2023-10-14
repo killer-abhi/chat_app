@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:global_chat/screens/chat_screen.dart';
+import 'package:global_chat/models/user.dart' as users;
 
 class FindFriendsScreen extends StatefulWidget {
   const FindFriendsScreen({Key? key}) : super(key: key);
@@ -58,9 +59,17 @@ class _FindFriendsScreenState extends State<FindFriendsScreen> {
             .where((item) =>
                 item.data()['email'] != _authenticatedUser.email &&
                 (item.data()['email'].contains(_searchText) ||
-                    item.data()['username'].contains(_searchText)))
+                    item.data()['userName'].contains(_searchText)))
             .toList();
 
+        final List<users.User> userList = [];
+        _loadedUsers.forEach((element) {
+          userList.add(users.User(
+              email: element['email'],
+              imageUrl: element['imageUrl'],
+              userId: element['userId'],
+              userName: element['userName']));
+        });
         return Scaffold(
           appBar: AppBar(
             title: TextField(
@@ -95,9 +104,9 @@ class _FindFriendsScreenState extends State<FindFriendsScreen> {
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
             ),
-            itemCount: _loadedUsers.length,
+            itemCount: userList.length,
             itemBuilder: (ctx, index) {
-              final user = _loadedUsers[index].data();
+              final user = userList[index];
 
               return Card(
                 // decoration: BoxDecoration(
@@ -108,22 +117,22 @@ class _FindFriendsScreenState extends State<FindFriendsScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Hero(
-                      tag: user,
+                      tag: user.email,
                       child: CircleAvatar(
                         radius: 40,
-                        foregroundImage: user['image_url'] != null
-                            ? NetworkImage(user['image_url'])
+                        foregroundImage: user.imageUrl != null
+                            ? NetworkImage(user.imageUrl)
                             : null,
-                        child: user['image_url'] == null
+                        child: user.imageUrl == null
                             ? Text(
-                                user['username'][0],
+                                user.userName[0],
                                 style: const TextStyle(fontSize: 36),
                               )
                             : null,
                       ),
                     ),
                     Text(
-                      user['username'],
+                      user.userName,
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     Row(
@@ -138,7 +147,6 @@ class _FindFriendsScreenState extends State<FindFriendsScreen> {
                             Navigator.of(context).push(MaterialPageRoute(
                               builder: (ctx) => ChatScreen(
                                 toUser: user,
-                                // fromUser: fromUser,
                               ),
                             ));
                           },

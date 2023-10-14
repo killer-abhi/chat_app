@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:global_chat/models/user.dart';
 import 'package:global_chat/screens/chat_screen.dart';
 
 class GlobalChatScreen extends StatelessWidget {
@@ -7,7 +8,11 @@ class GlobalChatScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const ChatScreen(
-      toUser: 'globalUser',
+      toUser: User(
+          email: 'globalUser',
+          imageUrl: 'globalUser',
+          userId: 'globalUser',
+          userName: 'globalUser'),
     );
   }
 }

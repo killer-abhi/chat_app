@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:global_chat/providers/add_new_user.dart';
+import 'package:global_chat/models/user.dart' as account;
 import 'package:google_sign_in/google_sign_in.dart';
 
 class GoogleSignInProvider extends ChangeNotifier {
@@ -24,20 +24,25 @@ class GoogleSignInProvider extends ChangeNotifier {
     dynamic loginDetails =
         await FirebaseAuth.instance.signInWithCredential(credential);
     if (loginDetails.additionalUserInfo.isNewUser) {
-      final user = <String, dynamic>{
-        "userId": _user!.id,
-        "username": _user!.displayName,
-        "email": _user!.email,
-        "image_url": _user!.photoUrl,
-      };
+      final newUser = account.User(
+          email: _user!.email,
+          imageUrl: _user!.photoUrl.toString(),
+          userId: _user!.id,
+          userName: _user!.displayName.toString());
+      // final user = <String, dynamic>{
+      //   "userId": _user!.id,
+      //   "username": _user!.displayName,
+      //   "email": _user!.email,
+      //   "image_url": _user!.photoUrl,
+      // };
 
       final db = FirebaseFirestore.instance;
-      db.collection('users').doc(_user!.email).set(user);
+      return db.collection('users').doc(newUser.email).set(newUser.toMap());
     }
     notifyListeners();
   }
 
-  dynamic getUserDetails() async {
+  Future<dynamic> getUserDetails() async {
     final user = await FirebaseFirestore.instance
         .collection('users')
         .doc(FirebaseAuth.instance.currentUser!.email)

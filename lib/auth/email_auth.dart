@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:global_chat/providers/add_new_user.dart';
 import 'package:global_chat/widgets/user_image_picker.dart';
+import 'package:global_chat/models/user.dart' as account;
 
 final _firebase = FirebaseAuth.instance;
 
@@ -60,12 +61,11 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
         final imageUrl = await storageRef.getDownloadURL();
         var rdm = Random();
         var newUserId = '100000000000000' + rdm.nextInt(999999).toString();
-        final user = <String, dynamic>{
-          "userId": newUserId,
-          "username": _enteredUsername,
-          "email": _enteredEmail,
-          "image_url": imageUrl,
-        };
+        final user = account.User(
+            email: _enteredEmail,
+            imageUrl: imageUrl,
+            userId: newUserId,
+            userName: _enteredUsername);
         addNewUser(user);
       }
     } on FirebaseAuthException catch (error) {

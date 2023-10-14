@@ -1,20 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:global_chat/models/message.dart';
+import 'package:global_chat/models/user.dart';
 import 'package:global_chat/widgets/message_bubble.dart';
 
 class ChatMessages extends StatelessWidget {
   const ChatMessages({Key? key, required this.toUser, required this.fromUser})
       : super(key: key);
-  final dynamic toUser;
-  final dynamic fromUser;
+  final User toUser;
+  final User fromUser;
 
   @override
   Widget build(BuildContext context) {
-    final collectionName = toUser == 'globalUser'
-        ? 'globalChat'
-        : BigInt.parse(fromUser['userId']) + BigInt.parse(toUser['userId']);
-
+    final isGlobalMessage = toUser.email == 'globalUser';
+    final collectionName = isGlobalMessage ? 'globalChat' : fromUser.email;
     return StreamBuilder(
       stream: FirebaseFirestore.instance
           .collection(collectionName.toString())
@@ -54,27 +54,38 @@ class ChatMessages extends StatelessWidget {
           itemCount: loadedMessages.length,
           itemBuilder: (ctx, index) {
             final chatMessage = loadedMessages[index].data();
+            final message = Message(
+                message: loadedMessages[index].get('message'),
+                fromUser: loadedMessages[index].get('fromUser'),
+                toUser: loadedMessages[index].get('toUser'),
+                createdAt: loadedMessages[index].get('createdAt'),
+                fromUserName: loadedMessages[index].get('fromUserName'),
+                fromUserImageUrl:
+                    loadedMessages[index].get('fromUserImageUrl'));
+
             final nextChatMessage = index + 1 < loadedMessages.length
                 ? loadedMessages[index + 1].data()
                 : null;
-            final currentMessageUserId = chatMessage['fromUserId'];
-            final nextMessageUserId =
-                nextChatMessage != null ? nextChatMessage['fromUserId'] : null;
-            final nextUserIsSame = currentMessageUserId == nextMessageUserId;
+
+            // final currentMessageUserId = message.fromUser;
+            final nextMessageUserEmail =
+                nextChatMessage != null ? nextChatMessage['fromUser'] : null;
+
+            final nextUserIsSame = message.fromUser == nextMessageUserEmail;
 
             if (nextUserIsSame) {
               return MessageBubble.next(
-                isGlobalMessage: toUser == 'globalUser',
-                message: chatMessage['message'],
-                isMe: fromUser['userId'] == currentMessageUserId,
+                isGlobalMessage: toUser.email == 'globalUser',
+                message: message.message,
+                isMe: fromUser.email == message.fromUser,
               );
             } else {
               return MessageBubble.first(
-                isGlobalMessage: toUser == 'globalUser',
-                userImage: chatMessage['fromUserImage'],
-                username: chatMessage['fromUsername'],
-                message: chatMessage['message'],
-                isMe: fromUser['userId'] == currentMessageUserId,
+                isGlobalMessage: toUser.email == 'globalUser',
+                userImage: message.fromUserImageUrl,
+                username: message.fromUserName,
+                message: message.message,
+                isMe: fromUser.email == message.fromUser,
               );
             }
           },
