@@ -1,9 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:global_chat/screens/contact_list.dart';
+import 'package:global_chat/recentchats/sliding_cards.dart';
 import 'package:global_chat/screens/find_friends.dart';
 import 'package:global_chat/screens/global_chat.dart';
-import 'package:global_chat/screens/recent_chats.dart';
 import 'package:global_chat/screens/user_profile.dart';
 
 class NavigationScreen extends StatefulWidget {
@@ -33,7 +32,7 @@ class _NavigationScreenState extends State<NavigationScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
     _tabController.addListener(() {
       setState(() {
         _selectedIndex = _tabController.index;
@@ -60,10 +59,10 @@ class _NavigationScreenState extends State<NavigationScreen>
           indicatorSize: TabBarIndicatorSize.tab,
           controller: _tabController,
           tabs: const [
-            // Tab(
-            //   // child: const Text('Chats'),
-            //   icon: Icon(Icons.wechat),
-            // ),
+            Tab(
+              // child: const Text('Chats'),
+              icon: Icon(Icons.wechat),
+            ),
             Tab(
               icon: Icon(Icons.search),
             ),
@@ -80,33 +79,33 @@ class _NavigationScreenState extends State<NavigationScreen>
         physics: const BouncingScrollPhysics(),
         controller: _tabController,
         children: const [
-          // RecentChatsScreen(),
+          SlidingCardsView(),
           FindFriendsScreen(),
           GlobalChatScreen(),
           UserProfileScreen(),
         ],
       ),
-      floatingActionButton: _selectedIndex == 0
-          ? Container(
-              height: 55,
-              width: 55,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(25),
-                color: Theme.of(context).colorScheme.primaryContainer,
-              ),
-              child: IconButton(
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (ctx) => const ContactListScreen()));
-                },
-                icon: Icon(
-                  Icons.messenger,
-                  color: Theme.of(context).colorScheme.primary,
-                  size: 30,
-                ),
-              ),
-            )
-          : null,
+      // floatingActionButton: _selectedIndex == 0
+      //     ? Container(
+      //         height: 55,
+      //         width: 55,
+      //         decoration: BoxDecoration(
+      //           borderRadius: BorderRadius.circular(25),
+      //           color: Theme.of(context).colorScheme.primaryContainer,
+      //         ),
+      //         child: IconButton(
+      //           onPressed: () {
+      //             Navigator.of(context).push(MaterialPageRoute(
+      //                 builder: (ctx) => const ContactListScreen()));
+      //           },
+      //           icon: Icon(
+      //             Icons.messenger,
+      //             color: Theme.of(context).colorScheme.primary,
+      //             size: 30,
+      //           ),
+      //         ),
+      //       )
+      //     : null,
     );
   }
 }

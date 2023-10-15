@@ -13,8 +13,8 @@ class ChatMessages extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isGlobalMessage = toUser.email == 'globalUser';
-    final collectionName = isGlobalMessage ? 'globalChat' : fromUser.email;
+    final isGlobalMessage = toUser.userId == 'globalUser';
+    final collectionName = isGlobalMessage ? 'globalChat' : fromUser.userId;
     return StreamBuilder(
       stream: FirebaseFirestore.instance
           .collection(collectionName.toString())
@@ -24,11 +24,11 @@ class ChatMessages extends StatelessWidget {
           )
           .snapshots(),
       builder: (ctx, chatSnapshots) {
-        if (chatSnapshots.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
+        // if (chatSnapshots.connectionState == ConnectionState.waiting) {
+        //   return const Center(
+        //     child: CircularProgressIndicator(),
+        //   );
+        // }
         if (!chatSnapshots.hasData || chatSnapshots.data!.docs.isEmpty) {
           return const Center(
             child: Text('No messages found'),
@@ -40,7 +40,11 @@ class ChatMessages extends StatelessWidget {
           );
         }
 
-        final loadedMessages = chatSnapshots.data!.docs;
+        final loadedMessages = chatSnapshots.data!.docs
+            .where((element) =>
+                (element.get('toUser').toString() == toUser.userId) ||
+                (element.get('fromUser').toString() == toUser.userId))
+            .toList();
         return ListView.builder(
           physics: const BouncingScrollPhysics(),
           addAutomaticKeepAlives: true,
@@ -75,17 +79,17 @@ class ChatMessages extends StatelessWidget {
 
             if (nextUserIsSame) {
               return MessageBubble.next(
-                isGlobalMessage: toUser.email == 'globalUser',
+                isGlobalMessage: toUser.userId == 'globalUser',
                 message: message.message,
-                isMe: fromUser.email == message.fromUser,
+                isMe: fromUser.userId == message.fromUser,
               );
             } else {
               return MessageBubble.first(
-                isGlobalMessage: toUser.email == 'globalUser',
+                isGlobalMessage: toUser.userId == 'globalUser',
                 userImage: message.fromUserImageUrl,
                 username: message.fromUserName,
                 message: message.message,
-                isMe: fromUser.email == message.fromUser,
+                isMe: fromUser.userId == message.fromUser,
               );
             }
           },

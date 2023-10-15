@@ -34,29 +34,35 @@ class _NewMessageState extends State<NewMessage> {
 
       final newMessage = Message(
           message: enteredMessage,
-          fromUser: widget.fromUser.email,
+          fromUser: widget.fromUser.userId,
           fromUserName: widget.fromUser.userName,
-          toUser: widget.toUser.email,
+          toUser: widget.toUser.userId,
           fromUserImageUrl: widget.fromUser.imageUrl,
           createdAt: Timestamp.now());
 
-      final collectionName = widget.toUser.email == 'globalUser'
-          ? 'globalChat'
-          : widget.fromUser.email;
+      if (widget.toUser.userId == 'globalUser') {
+        await FirebaseFirestore.instance
+            .collection('globalChat')
+            .add(newMessage.getMap());
+      }
 
-      await FirebaseFirestore.instance
-          .collection(collectionName.toString())
-          .add(newMessage.getMap());
+      if (widget.toUser.userId != 'globalUser') {
+        await FirebaseFirestore.instance
+            .collection(widget.toUser.userId)
+            .add(newMessage.getMap());
+        await FirebaseFirestore.instance
+            .collection(widget.fromUser.userId)
+            .add(newMessage.getMap());
 
-      if (widget.toUser.email != 'globalUser') {
+        //for recent chats
+        await FirebaseFirestore.instance
+            .collection(widget.fromUser.email)
+            .doc(widget.toUser.email)
+            .set(widget.toUser.toMap());
         await FirebaseFirestore.instance
             .collection(widget.toUser.email)
             .doc(widget.fromUser.email)
-            .set(newMessage.getMap());
-        await FirebaseFirestore.instance
-            .collection(widget.toUser.email)
-            .doc(widget.toUser.email)
-            .set(newMessage.getMap());
+            .set(widget.fromUser.toMap());
       }
     }
 
