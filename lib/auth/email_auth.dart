@@ -62,10 +62,11 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
         var rdm = Random();
         var newUserId = '100000000000000' + rdm.nextInt(999999).toString();
         final user = User(
-            email: _enteredEmail,
-            imageUrl: imageUrl,
-            userId: newUserId,
-            userName: _enteredUsername);
+          email: _enteredEmail,
+          imageUrl: imageUrl,
+          userId: newUserId,
+          userName: _enteredUsername,
+        );
         addNewUser(user);
       }
     } on auth.FirebaseAuthException catch (error) {

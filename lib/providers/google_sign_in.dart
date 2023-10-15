@@ -29,12 +29,6 @@ class GoogleSignInProvider extends ChangeNotifier {
           imageUrl: _user!.photoUrl.toString(),
           userId: _user!.id,
           userName: _user!.displayName.toString());
-      // final user = <String, dynamic>{
-      //   "userId": _user!.id,
-      //   "username": _user!.displayName,
-      //   "email": _user!.email,
-      //   "image_url": _user!.photoUrl,
-      // };
 
       final db = FirebaseFirestore.instance;
       return db.collection('users').doc(newUser.email).set(newUser.toMap());

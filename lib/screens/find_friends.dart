@@ -64,11 +64,14 @@ class _FindFriendsScreenState extends State<FindFriendsScreen> {
 
         final List<users.User> userList = [];
         _loadedUsers.forEach((element) {
-          userList.add(users.User(
+          userList.add(
+            users.User(
               email: element['email'],
               imageUrl: element['imageUrl'],
               userId: element['userId'],
-              userName: element['userName']));
+              userName: element['userName'],
+            ),
+          );
         });
         return Scaffold(
           appBar: AppBar(

@@ -9,10 +9,11 @@ class GlobalChatScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return const ChatScreen(
       toUser: User(
-          email: 'globalUser',
-          imageUrl: 'globalUser',
-          userId: 'globalUser',
-          userName: 'globalUser'),
+        email: 'globalUser',
+        imageUrl: 'globalUser',
+        userId: 'globalUser',
+        userName: 'globalUser',
+      ),
     );
   }
 }

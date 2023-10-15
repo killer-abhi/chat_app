@@ -33,10 +33,11 @@ class _ChatScreenState extends State<ChatScreen> {
             );
           } else {
             final fromUser = User(
-                email: docSnapshot.data!.get('email'),
-                imageUrl: docSnapshot.data!.get('imageUrl'),
-                userId: docSnapshot.data!.get('userId'),
-                userName: docSnapshot.data!.get('userName'));
+              email: docSnapshot.data!.get('email'),
+              imageUrl: docSnapshot.data!.get('imageUrl'),
+              userId: docSnapshot.data!.get('userId'),
+              userName: docSnapshot.data!.get('userName'),
+            );
             return Scaffold(
               appBar: toUser.email != 'globalUser'
                   ? AppBar(

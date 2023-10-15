@@ -108,10 +108,11 @@ class _SlidingCardsViewState extends State<SlidingCardsView> {
                         offset: Offset(-32 * gauss * pageOffset.sign, 0),
                         child: CardData(
                           fromUser: User(
-                              email: currentUserEmail,
-                              imageUrl: '',
-                              userId: currentUserId,
-                              userName: ''),
+                            email: currentUserEmail,
+                            imageUrl: '',
+                            userId: currentUserId,
+                            userName: '',
+                          ),
                           toUser: users[index],
                           time: timeText,
                         ),
