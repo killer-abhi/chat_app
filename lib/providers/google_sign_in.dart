@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
-import 'package:global_chat/models/user.dart' as account;
+import 'package:global_chat/models/user.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class GoogleSignInProvider extends ChangeNotifier {
@@ -17,14 +17,14 @@ class GoogleSignInProvider extends ChangeNotifier {
 
     final googleAuth = await googleUser.authentication;
 
-    final credential = GoogleAuthProvider.credential(
+    final credential = auth.GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
     dynamic loginDetails =
-        await FirebaseAuth.instance.signInWithCredential(credential);
+        await auth.FirebaseAuth.instance.signInWithCredential(credential);
     if (loginDetails.additionalUserInfo.isNewUser) {
-      final newUser = account.User(
+      final newUser = User(
           email: _user!.email,
           imageUrl: _user!.photoUrl.toString(),
           userId: _user!.id,
@@ -45,7 +45,7 @@ class GoogleSignInProvider extends ChangeNotifier {
   Future<dynamic> getUserDetails() async {
     final user = await FirebaseFirestore.instance
         .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.email)
+        .doc(auth.FirebaseAuth.instance.currentUser!.email)
         .get();
 
     return user;

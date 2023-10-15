@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:global_chat/providers/google_sign_in.dart';
-import 'package:global_chat/screens/chat_screen.dart';
 import 'package:provider/provider.dart';
 
 class RecentChatsScreen extends StatefulWidget {

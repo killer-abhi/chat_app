@@ -4,8 +4,14 @@ import 'package:global_chat/screens/chat_screen.dart';
 import 'package:global_chat/widgets/chat_messages.dart';
 
 class CardData extends StatelessWidget {
-  const CardData({super.key, required this.user});
-  final User user;
+  const CardData(
+      {super.key,
+      required this.fromUser,
+      required this.toUser,
+      required this.time});
+  final User toUser;
+  final User fromUser;
+  final String time;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -43,10 +49,10 @@ class CardData extends StatelessWidget {
               minLeadingWidth: 50,
               minVerticalPadding: 20,
               leading: CircleAvatar(
-                backgroundImage: NetworkImage(user.imageUrl),
+                backgroundImage: NetworkImage(toUser.imageUrl),
               ),
               title: Text(
-                user.userName,
+                toUser.userName,
                 style: TextStyle(
                   fontSize: 20,
                   color: Theme.of(context).colorScheme.tertiary,
@@ -60,12 +66,8 @@ class CardData extends StatelessWidget {
                 const SizedBox(height: 8),
                 Expanded(
                   child: ChatMessages(
-                    toUser: user,
-                    fromUser: const User(
-                        email: 'dk9554654249@gmail.com',
-                        imageUrl: 'globalUser',
-                        userId: '103774960897189757728',
-                        userName: ''),
+                    toUser: toUser,
+                    fromUser: fromUser,
                   ),
                 ),
                 Padding(
@@ -86,7 +88,8 @@ class CardData extends StatelessWidget {
                           onPressed: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => ChatScreen(toUser: user),
+                                builder: (context) =>
+                                    ChatScreen(toUser: toUser),
                               ),
                             );
                           },
@@ -95,9 +98,9 @@ class CardData extends StatelessWidget {
                         ),
                       ),
                       const Spacer(),
-                      const Text(
-                        '2 days ago',
-                        style: TextStyle(
+                      Text(
+                        time,
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
                         ),

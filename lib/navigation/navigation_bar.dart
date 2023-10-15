@@ -85,27 +85,6 @@ class _NavigationScreenState extends State<NavigationScreen>
           UserProfileScreen(),
         ],
       ),
-      // floatingActionButton: _selectedIndex == 0
-      //     ? Container(
-      //         height: 55,
-      //         width: 55,
-      //         decoration: BoxDecoration(
-      //           borderRadius: BorderRadius.circular(25),
-      //           color: Theme.of(context).colorScheme.primaryContainer,
-      //         ),
-      //         child: IconButton(
-      //           onPressed: () {
-      //             Navigator.of(context).push(MaterialPageRoute(
-      //                 builder: (ctx) => const ContactListScreen()));
-      //           },
-      //           icon: Icon(
-      //             Icons.messenger,
-      //             color: Theme.of(context).colorScheme.primary,
-      //             size: 30,
-      //           ),
-      //         ),
-      //       )
-      //     : null,
     );
   }
 }

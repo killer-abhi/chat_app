@@ -58,11 +58,19 @@ class _NewMessageState extends State<NewMessage> {
         await FirebaseFirestore.instance
             .collection(widget.fromUser.email)
             .doc(widget.toUser.email)
-            .set(widget.toUser.toMap());
+            .set({
+          ...widget.toUser.toMap(),
+          'updatedAt': Timestamp.now(),
+          'fromUserId': widget.fromUser.userId
+        });
         await FirebaseFirestore.instance
             .collection(widget.toUser.email)
             .doc(widget.fromUser.email)
-            .set(widget.fromUser.toMap());
+            .set({
+          ...widget.fromUser.toMap(),
+          'updatedAt': Timestamp.now(),
+          'fromUserId': widget.toUser.userId
+        });
       }
     }
 

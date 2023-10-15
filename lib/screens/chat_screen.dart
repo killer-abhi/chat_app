@@ -1,13 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
-import 'package:global_chat/models/user.dart' as account;
+import 'package:global_chat/models/user.dart';
 import 'package:global_chat/widgets/chat_messages.dart';
 import 'package:global_chat/widgets/new_message.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key, required this.toUser}) : super(key: key);
-  final account.User toUser;
+  final User toUser;
   @override
   State<ChatScreen> createState() => _ChatScreenState();
 }
@@ -16,14 +16,14 @@ class _ChatScreenState extends State<ChatScreen> {
   Future<DocumentSnapshot> getCurrentUser() async {
     final doc = await FirebaseFirestore.instance
         .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.email)
+        .doc(auth.FirebaseAuth.instance.currentUser!.email)
         .get();
     return doc;
   }
 
   @override
   Widget build(BuildContext context) {
-    final account.User toUser = widget.toUser;
+    final User toUser = widget.toUser;
     return FutureBuilder<DocumentSnapshot>(
         future: getCurrentUser(),
         builder: (BuildContext context, docSnapshot) {
@@ -32,7 +32,7 @@ class _ChatScreenState extends State<ChatScreen> {
               child: CircularProgressIndicator(),
             );
           } else {
-            final fromUser = account.User(
+            final fromUser = User(
                 email: docSnapshot.data!.get('email'),
                 imageUrl: docSnapshot.data!.get('imageUrl'),
                 userId: docSnapshot.data!.get('userId'),
