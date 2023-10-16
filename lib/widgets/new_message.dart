@@ -61,7 +61,6 @@ class _NewMessageState extends State<NewMessage> {
             .set({
           ...widget.toUser.toMap(),
           'updatedAt': Timestamp.now(),
-          'fromUserId': widget.fromUser.userId
         });
         await FirebaseFirestore.instance
             .collection(widget.toUser.email)
@@ -69,7 +68,6 @@ class _NewMessageState extends State<NewMessage> {
             .set({
           ...widget.fromUser.toMap(),
           'updatedAt': Timestamp.now(),
-          'fromUserId': widget.toUser.userId
         });
       }
     }

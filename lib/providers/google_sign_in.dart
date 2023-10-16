@@ -7,7 +7,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 class GoogleSignInProvider extends ChangeNotifier {
   final googleSignIn = GoogleSignIn();
   GoogleSignInAccount? _user;
-
   GoogleSignInAccount get user => _user!;
   dynamic get currentUser => getUserDetails();
   Future googleLogin() async {

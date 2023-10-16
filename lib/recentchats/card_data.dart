@@ -58,6 +58,7 @@ class CardData extends StatelessWidget {
                   color: Theme.of(context).colorScheme.tertiary,
                 ),
               ),
+              // trailing: Text(toUser.isOnline ? 'Online' : 'Offline'),
             ),
           ),
           Expanded(

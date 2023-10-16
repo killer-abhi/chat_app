@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:global_chat/providers/add_new_user.dart';
+import 'package:global_chat/providers/current_user.dart';
 import 'package:global_chat/providers/google_sign_in.dart';
 import 'package:global_chat/navigation/home.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -19,8 +19,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => GoogleSignInProvider(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => GoogleSignInProvider()),
+        ChangeNotifierProvider(create: (context) => CurrentUserProvider()),
+      ],
       child: MaterialApp(
         title: 'FlutterChat',
         theme: ThemeData().copyWith(

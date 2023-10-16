@@ -70,6 +70,7 @@ class _FindFriendsScreenState extends State<FindFriendsScreen> {
               imageUrl: element['imageUrl'],
               userId: element['userId'],
               userName: element['userName'],
+              isOnline: element['isOnline'] ? element['isOnline'] : false,
             ),
           );
         });

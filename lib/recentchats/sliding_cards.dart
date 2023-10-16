@@ -4,7 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:flutter/material.dart';
 import 'package:global_chat/models/user.dart';
+import 'package:global_chat/providers/current_user.dart';
 import 'package:global_chat/recentchats/card_data.dart';
+import 'package:provider/provider.dart';
 
 class SlidingCardsView extends StatefulWidget {
   const SlidingCardsView({super.key});
@@ -30,11 +32,11 @@ class _SlidingCardsViewState extends State<SlidingCardsView> {
 
   @override
   Widget build(BuildContext context) {
-    final currentUserEmail =
-        Auth.FirebaseAuth.instance.currentUser!.email.toString();
+    final currentUser =
+        Provider.of<CurrentUserProvider>(context, listen: false).currUser;
     return StreamBuilder(
       stream: FirebaseFirestore.instance
-          .collection(currentUserEmail)
+          .collection(currentUser.email)
           .orderBy('updatedAt', descending: true)
           .snapshots(),
       builder: (context, snapshots) {
@@ -52,9 +54,7 @@ class _SlidingCardsViewState extends State<SlidingCardsView> {
           );
         }
         final _loadedUsers = snapshots.data!.docs.toList();
-        var currentUserId;
         final users = _loadedUsers.map((e) {
-          currentUserId = e.get('fromUserId');
           return User(
             email: e.get('email'),
             imageUrl: e.get('imageUrl'),
@@ -107,12 +107,7 @@ class _SlidingCardsViewState extends State<SlidingCardsView> {
                       return Transform.translate(
                         offset: Offset(-32 * gauss * pageOffset.sign, 0),
                         child: CardData(
-                          fromUser: User(
-                            email: currentUserEmail,
-                            imageUrl: '',
-                            userId: currentUserId,
-                            userName: '',
-                          ),
+                          fromUser: currentUser,
                           toUser: users[index],
                           time: timeText,
                         ),

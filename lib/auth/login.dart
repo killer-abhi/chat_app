@@ -39,28 +39,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   isLogin: _isLogin,
                   isEmailSignUp: _isEmailSignUp,
                 ),
-              // if (!_isLogin && !_isEmailSignUp)
-              //   Card(
-              //     margin: const EdgeInsets.only(
-              //       top: 30,
-              //       left: 20,
-              //       right: 20,
-              //       bottom: 0,
-              //     ),
-              //     child: TextButton(
-              //       onPressed: () {
-              //         setState(() {
-              //           _isEmailSignUp = true;
-              //         });
-              //       },
-              //       style: ElevatedButton.styleFrom(
-              //         foregroundColor: Colors.black,
-              //         minimumSize: const Size(double.infinity, 50),
-              //       ),
-              //       child: const Text('Email and Password'),
-              //     ),
-              //   ),
-              // if (_isLogin)
               GoogleLogin(
                 isLogin: _isLogin,
               ),
@@ -76,9 +54,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         setState(() {
                           _isLogin = !_isLogin;
                           _isEmailSignUp = true;
-                          // if (_isEmailSignUp) {
-                          //   _isEmailSignUp = !_isEmailSignUp;
-                          // }
                         });
                       },
                       child: Text(_isLogin ? 'SignUp' : 'Login'),
