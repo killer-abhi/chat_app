@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:global_chat/models/user.dart';
 import 'package:global_chat/providers/current_user.dart';
@@ -13,12 +14,39 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  String _isOnline = '';
+
+  void fetchOnlineStatus() {
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.toUser.email)
+        .get()
+        .then((doc) {
+      if (doc.get('isOnline') == true) {
+        setState(() {
+          _isOnline = 'Online';
+        });
+      } else {
+        setState(() {
+          _isOnline = 'Offline';
+        });
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchOnlineStatus();
+  }
+
   @override
   Widget build(BuildContext context) {
     final currentUser =
         Provider.of<CurrentUserProvider>(context, listen: false).currUser;
     final User toUser = widget.toUser;
-    final isActive = toUser.isOnline;
+
+    // final isActive = toUser.isOnline;
     return Scaffold(
       appBar: toUser.email != 'globalUser'
           ? AppBar(
@@ -41,8 +69,11 @@ class _ChatScreenState extends State<ChatScreen> {
                         : null,
                   ),
                 ),
-                title: Text(toUser.userName),
-                trailing: Text(isActive ? 'Online' : 'Offline'),
+                title: Text(toUser.userName,
+                    style: const TextStyle(
+                      fontSize: 20,
+                    )),
+                trailing: Text(_isOnline),
               ),
             )
           : null,

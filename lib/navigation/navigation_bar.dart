@@ -29,26 +29,28 @@ class _NavigationScreenState extends State<NavigationScreen>
   Widget build(BuildContext context) {
     final userDetails =
         Provider.of<CurrentUserProvider>(context, listen: false).currUser;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('ChatWave'),
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         actions: [
           TextButton.icon(
-            onPressed: () async {
-              await FirebaseFirestore.instance
+            onPressed: () {
+              FirebaseFirestore.instance
                   .collection('users')
                   .doc(FirebaseAuth.instance.currentUser!.email)
                   .get()
                   .then((doc) {
                 if (doc.data()!.isNotEmpty) {
-                  FirebaseFirestore.instance
+                  return FirebaseFirestore.instance
                       .collection('users')
                       .doc(doc.get('email').toString())
                       .update({'isOnline': false});
                 }
+              }).then((res) {
+                FirebaseAuth.instance.signOut();
               });
-              FirebaseAuth.instance.signOut();
             },
             icon: const Icon(Icons.logout),
             label: const Text('Logout'),

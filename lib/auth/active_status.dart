@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
 import 'package:global_chat/providers/current_user.dart';
-import 'package:global_chat/recentchats/sliding_cards.dart';
+import 'package:global_chat/recentchats/recent_cards.dart';
 import 'package:provider/provider.dart';
 
 class ActiveStatus extends StatefulWidget {
