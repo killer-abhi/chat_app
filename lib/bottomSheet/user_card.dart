@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:global_chat/models/user.dart';
+import 'package:global_chat/screens/chat_screen.dart';
 
 class ExpandedEventItem extends StatelessWidget {
   final double topMargin;
@@ -6,18 +8,18 @@ class ExpandedEventItem extends StatelessWidget {
   final double height;
   final bool isVisible;
   final double borderRadius;
-  final String title;
-  final String date;
 
-  const ExpandedEventItem(
-      {super.key,
-      required this.topMargin,
-      required this.height,
-      required this.isVisible,
-      required this.borderRadius,
-      required this.title,
-      required this.date,
-      required this.leftMargin});
+  final User user;
+
+  const ExpandedEventItem({
+    super.key,
+    required this.topMargin,
+    required this.height,
+    required this.isVisible,
+    required this.borderRadius,
+    required this.leftMargin,
+    required this.user,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -32,40 +34,62 @@ class ExpandedEventItem extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(borderRadius),
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.primaryContainer,
           ),
           padding: EdgeInsets.only(left: height).add(const EdgeInsets.all(8)),
-          child: _buildContent(),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildContent() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(title, style: const TextStyle(fontSize: 20)),
-        const SizedBox(height: 8),
-        Text(
-          date,
-          style: const TextStyle(
-            fontWeight: FontWeight.w300,
-            fontSize: 12,
-            color: Colors.grey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                user.userName,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontSize: 20,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                user.email,
+                style: TextStyle(
+                  fontWeight: FontWeight.w300,
+                  fontSize: 12,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+              const Spacer(),
+              Row(
+                children: <Widget>[
+                  Icon(
+                    Icons.place,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  Text(
+                    'India',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontSize: 13,
+                    ),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => ChatScreen(toUser: user),
+                        ),
+                      );
+                    },
+                    icon: Icon(
+                      Icons.chat,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                ],
+              )
+            ],
           ),
         ),
-        const Spacer(),
-        Row(
-          children: <Widget>[
-            Icon(Icons.place, color: Colors.grey.shade400, size: 16),
-            Text(
-              'India',
-              style: TextStyle(color: Colors.grey.shade400, fontSize: 13),
-            )
-          ],
-        )
-      ],
+      ),
     );
   }
 }

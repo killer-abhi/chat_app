@@ -30,7 +30,7 @@ class _OnlineUsersState extends State<OnlineUsers> {
         final loadedUsers = snapshots.data!.docs.toList().where((element) =>
             element.get('email') !=
             auth.FirebaseAuth.instance.currentUser!.email);
-        final users = loadedUsers.map((e) {
+        var users = loadedUsers.map((e) {
           return User(
             userName: e['userName'],
             email: e['email'],
@@ -39,6 +39,8 @@ class _OnlineUsersState extends State<OnlineUsers> {
             isOnline: e['isOnline'],
           );
         }).toList();
+
+        users = users.where((e) => e.isOnline == true).toList();
         return ExhibitionBottomSheet(
           users: users,
         );

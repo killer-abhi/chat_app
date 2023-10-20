@@ -81,8 +81,8 @@ class _NewMessageState extends State<NewMessage> {
         enableSuggestions: true,
         onTapOutside: (_) {
           FocusScope.of(context).requestFocus(FocusNode());
-          WidgetsBinding.instance.addPostFrameCallback(
-              (_) => _messageController.clear()); //remove focus
+          // WidgetsBinding.instance.addPostFrameCallback(
+          //     (_) => _messageController.clear()); //remove focus
         },
         decoration: InputDecoration(
           labelText: 'Send a message ...',

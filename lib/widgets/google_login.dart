@@ -20,9 +20,6 @@ class _GoogleLoginState extends State<GoogleLogin> {
     });
     final provider = Provider.of<GoogleSignInProvider>(context, listen: false);
     await provider.googleLogin();
-    setState(() {
-      _isAuthenticating = false;
-    });
   }
 
   @override
@@ -39,7 +36,9 @@ class _GoogleLoginState extends State<GoogleLogin> {
         : Card(
             margin: const EdgeInsets.all(20),
             child: TextButton.icon(
-              onPressed: authenticate,
+              onPressed: () {
+                authenticate();
+              },
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.black,
                 minimumSize: const Size(double.infinity, 50),

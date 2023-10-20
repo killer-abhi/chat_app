@@ -48,8 +48,19 @@ class CardData extends StatelessWidget {
             child: ListTile(
               minLeadingWidth: 50,
               minVerticalPadding: 20,
-              leading: CircleAvatar(
-                backgroundImage: NetworkImage(toUser.imageUrl),
+              leading: Hero(
+                tag: toUser.email,
+                child: CircleAvatar(
+                  radius: 20,
+                  backgroundColor: Theme.of(context).colorScheme.onSecondary,
+                  foregroundImage: NetworkImage(toUser.imageUrl),
+                  child: toUser.imageUrl == 'null'
+                      ? Text(
+                          toUser.userName[0],
+                          style: const TextStyle(fontSize: 30),
+                        )
+                      : null,
+                ),
               ),
               title: Text(
                 toUser.userName,
@@ -75,28 +86,24 @@ class CardData extends StatelessWidget {
                   padding: const EdgeInsets.all(20),
                   child: Row(
                     children: [
-                      ElevatedButton(
+                      ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
                               Theme.of(context).colorScheme.primaryContainer,
                           textStyle: const TextStyle(color: Colors.white),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        onPressed: () {},
-                        child: TextButton.icon(
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    ChatScreen(toUser: toUser),
-                              ),
-                            );
-                          },
-                          icon: const Icon(Icons.messenger),
-                          label: const Text('Chat'),
-                        ),
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => ChatScreen(toUser: toUser),
+                            ),
+                          );
+                        },
+                        label: const Text('Chat'),
+                        icon: const Icon(Icons.chat_outlined),
                       ),
                       const Spacer(),
                       Text(

@@ -25,7 +25,7 @@ class _ExhibitionBottomSheetState extends State<ExhibitionBottomSheet>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
-  double get maxHeight => MediaQuery.of(context).size.height - 150;
+  double get maxHeight => MediaQuery.of(context).size.height - 170;
 
   double get headerTopMargin =>
       lerp(20, 20 + MediaQuery.of(context).padding.top);
@@ -85,7 +85,7 @@ class _ExhibitionBottomSheetState extends State<ExhibitionBottomSheet>
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 32),
               decoration: BoxDecoration(
-                color: Theme.of(context).indicatorColor,
+                color: Theme.of(context).colorScheme.primary.withRed(140),
                 borderRadius:
                     const BorderRadius.vertical(top: Radius.circular(32)),
               ),
@@ -119,11 +119,16 @@ class _ExhibitionBottomSheetState extends State<ExhibitionBottomSheet>
           left: Radius.circular(iconLeftBorderRadius),
           right: Radius.circular(iconRightBorderRadius),
         ),
-        child: Image.network(
-          user.imageUrl,
-          fit: BoxFit.cover,
-          alignment: Alignment(lerp(1, 0), 0),
-        ),
+        child: user.imageUrl != 'null'
+            ? Image.network(
+                user.imageUrl,
+                fit: BoxFit.cover,
+                alignment: Alignment(lerp(1, 0), 0),
+              )
+            : Text(
+                user.userName[0],
+                style: TextStyle(fontSize: 20),
+              ),
       ),
     );
   }
@@ -136,8 +141,7 @@ class _ExhibitionBottomSheetState extends State<ExhibitionBottomSheet>
       height: iconSize,
       isVisible: _controller.status == AnimationStatus.completed,
       borderRadius: itemBorderRadius,
-      title: user.userName,
-      date: user.email,
+      user: user,
     );
   }
 

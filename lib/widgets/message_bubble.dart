@@ -57,8 +57,8 @@ class MessageBubble extends StatelessWidget {
               radius: 20,
               backgroundColor: theme.colorScheme.primary.withAlpha(180),
               foregroundImage:
-                  userImage == null ? null : NetworkImage(userImage!),
-              child: userImage == null
+                  userImage == 'null' ? null : NetworkImage(userImage!),
+              child: userImage == 'null'
                   ? Text(
                       username![0],
                       style: const TextStyle(

@@ -89,88 +89,85 @@ class _UserProfileScreen extends State<UserProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final userDetails = widget.userDetails;
-
     return Padding(
       padding: const EdgeInsets.all(20),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            CircleAvatar(
-              radius: 80,
-              backgroundColor: Colors.purple,
-              foregroundImage: _imageWidget,
-              child: userDetails.imageUrl == null
-                  ? Text(
-                      userDetails.userName[0],
-                      style: const TextStyle(fontSize: 36),
-                    )
-                  : null,
-            ),
-            TextButton.icon(
-              onPressed: _pickImage,
-              icon: const Icon(Icons.photo_library),
-              label: const Text('Change Photo'),
-            ),
-            const SizedBox(height: 10),
-            Container(
-              height: 50,
-              child: TextField(
-                controller: _userNameController,
-                readOnly: _isEditing,
-                autofocus: !_isEditing,
-                onTapOutside: (_) {
-                  FocusScope.of(context).requestFocus(FocusNode());
-                },
-                decoration: InputDecoration(
-                  labelText: 'Username',
-                  contentPadding: const EdgeInsets.all(10),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  suffix: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        _isEditing = false;
-                      });
-                    },
-                    icon: const Icon(Icons.edit_rounded),
-                  ),
-                ),
-                style: const TextStyle(fontSize: 18),
-              ),
-            ),
-            const SizedBox(height: 20),
-            TextFormField(
+      child: Column(
+        children: [
+          CircleAvatar(
+            radius: 80,
+            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+            foregroundImage: _imageWidget,
+            child: userDetails.imageUrl == 'null'
+                ? Text(
+                    userDetails.userName[0],
+                    style: const TextStyle(fontSize: 100),
+                  )
+                : null,
+          ),
+          TextButton.icon(
+            onPressed: _pickImage,
+            icon: const Icon(Icons.photo_library),
+            label: const Text('Change Photo'),
+          ),
+          const SizedBox(height: 10),
+          Container(
+            height: 50,
+            child: TextField(
+              controller: _userNameController,
+              readOnly: _isEditing,
+              autofocus: !_isEditing,
+              onTapOutside: (_) {
+                FocusScope.of(context).requestFocus(FocusNode());
+              },
               decoration: InputDecoration(
-                labelText: 'Email',
+                labelText: 'Username',
                 contentPadding: const EdgeInsets.all(10),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5),
                 ),
-              ),
-              initialValue: userDetails.email,
-              enabled: false,
-            ),
-            const SizedBox(height: 30),
-            Row(
-              children: [
-                const Spacer(),
-                ElevatedButton.icon(
-                  style: ButtonStyle(
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ))),
-                  onPressed: _updateData,
-                  icon: _isUpdating
-                      ? const Icon(Icons.change_circle)
-                      : const Icon(Icons.restart_alt_rounded),
-                  label: Text(_isUpdating ? 'Updating ...' : 'Update Profile'),
+                suffix: IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _isEditing = false;
+                    });
+                  },
+                  icon: const Icon(Icons.edit_rounded),
                 ),
-              ],
+              ),
+              style: const TextStyle(fontSize: 18),
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 20),
+          TextFormField(
+            decoration: InputDecoration(
+              labelText: 'Email',
+              contentPadding: const EdgeInsets.all(10),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5),
+              ),
+            ),
+            initialValue: userDetails.email,
+            enabled: false,
+          ),
+          const SizedBox(height: 30),
+          Row(
+            children: [
+              const Spacer(),
+              ElevatedButton.icon(
+                style: ButtonStyle(
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ))),
+                onPressed: _updateData,
+                icon: _isUpdating
+                    ? const Icon(Icons.change_circle)
+                    : const Icon(Icons.restart_alt_rounded),
+                label: Text(_isUpdating ? 'Updating ...' : 'Update Profile'),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

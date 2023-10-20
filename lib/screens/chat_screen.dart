@@ -50,7 +50,7 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       appBar: toUser.email != 'globalUser'
           ? AppBar(
-              leadingWidth: 30,
+              leadingWidth: 20,
               backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
               title: ListTile(
                 leading: Hero(
@@ -61,7 +61,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     foregroundImage: toUser.imageUrl != 'globalUser'
                         ? NetworkImage(toUser.imageUrl)
                         : null,
-                    child: toUser.imageUrl == 'globalUser'
+                    child: toUser.imageUrl == 'null'
                         ? Text(
                             toUser.userName[0],
                             style: const TextStyle(fontSize: 30),

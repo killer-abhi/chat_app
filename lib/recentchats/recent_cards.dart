@@ -3,7 +3,6 @@ import 'dart:math' as math;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
-import 'package:global_chat/bottomSheet/exhibition_bottom_sheet.dart';
 import 'package:global_chat/bottomSheet/online_users.dart';
 import 'package:global_chat/models/user.dart';
 import 'package:global_chat/providers/current_user.dart';
