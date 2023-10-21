@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
-import 'package:global_chat/bottomSheet/exhibition_bottom_sheet.dart';
 import 'package:global_chat/models/user.dart';
+import 'package:global_chat/bottomSheet/bottom_sheet.dart';
 
 class OnlineUsers extends StatefulWidget {
   const OnlineUsers({Key? key}) : super(key: key);
@@ -41,9 +41,7 @@ class _OnlineUsersState extends State<OnlineUsers> {
         }).toList();
 
         users = users.where((e) => e.isOnline == true).toList();
-        return ExhibitionBottomSheet(
-          users: users,
-        );
+        return BottomSheetModal(users: users);
       },
     );
   }

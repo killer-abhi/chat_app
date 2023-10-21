@@ -1,9 +1,8 @@
-import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:global_chat/bottomSheet/user_card.dart';
 import 'package:global_chat/models/user.dart';
+import 'package:global_chat/screens/chat_screen.dart';
 
 const double minHeight = 120;
 const double iconStartSize = 44;
@@ -13,15 +12,15 @@ const double iconEndMarginTop = 80;
 const double iconsVerticalSpacing = 24;
 const double iconsHorizontalSpacing = 16;
 
-class ExhibitionBottomSheet extends StatefulWidget {
-  const ExhibitionBottomSheet({super.key, required this.users});
+class BottomSheetModal extends StatefulWidget {
+  const BottomSheetModal({super.key, required this.users});
   final List<User> users;
 
   @override
-  State<ExhibitionBottomSheet> createState() => _ExhibitionBottomSheetState();
+  State<BottomSheetModal> createState() => _BottomSheetState();
 }
 
-class _ExhibitionBottomSheetState extends State<ExhibitionBottomSheet>
+class _BottomSheetState extends State<BottomSheetModal>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
@@ -79,9 +78,6 @@ class _ExhibitionBottomSheetState extends State<ExhibitionBottomSheet>
           right: 0,
           bottom: 0,
           child: GestureDetector(
-            onTap: _toggle,
-            onVerticalDragUpdate: _handleDragUpdate,
-            onVerticalDragEnd: _handleDragEnd,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 32),
               decoration: BoxDecoration(
@@ -89,15 +85,23 @@ class _ExhibitionBottomSheetState extends State<ExhibitionBottomSheet>
                 borderRadius:
                     const BorderRadius.vertical(top: Radius.circular(32)),
               ),
-              child: Stack(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  const MenuButton(),
                   SheetHeader(
                     fontSize: headerFontSize,
                     topMargin: headerTopMargin,
                   ),
-                  for (User user in users) _buildFullItem(user),
-                  for (User user in users) _buildIcon(user),
+                  Container(
+                    height: 60,
+                    width: double.infinity,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: <Widget>[
+                        for (User user in users) _buildIcon(user),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -108,65 +112,44 @@ class _ExhibitionBottomSheetState extends State<ExhibitionBottomSheet>
   }
 
   Widget _buildIcon(User user) {
-    int index = widget.users.indexOf(user);
-    return Positioned(
-      height: iconSize,
-      width: iconSize,
-      top: iconTopMargin(index),
-      left: iconLeftMargin(index),
-      child: ClipRRect(
-        borderRadius: BorderRadius.horizontal(
-          left: Radius.circular(iconLeftBorderRadius),
-          right: Radius.circular(iconRightBorderRadius),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChatScreen(toUser: user),
+          ),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.only(left: 10, right: 10),
+        width: 60,
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: Theme.of(context).colorScheme.primary.withBlue(240),
+            width: 2,
+          ),
+          color: Theme.of(context).colorScheme.primaryContainer,
+          borderRadius: BorderRadius.circular(15),
+          image: DecorationImage(
+            image: NetworkImage(user.imageUrl),
+            fit: BoxFit.cover,
+          ),
         ),
-        child: user.imageUrl != 'null'
-            ? Image.network(
-                user.imageUrl,
-                fit: BoxFit.cover,
-                alignment: Alignment(lerp(1, 0), 0),
+        child: user.imageUrl == 'null'
+            ? Align(
+                alignment: Alignment.center,
+                child: Text(
+                  user.userName[0],
+                  style: const TextStyle(
+                    fontSize: 30,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
               )
-            : Text(
-                user.userName[0],
-                style: TextStyle(fontSize: 20),
-              ),
+            : null,
       ),
     );
-  }
-
-  Widget _buildFullItem(User user) {
-    int index = widget.users.indexOf(user);
-    return ExpandedEventItem(
-      topMargin: iconTopMargin(index),
-      leftMargin: iconLeftMargin(index),
-      height: iconSize,
-      isVisible: _controller.status == AnimationStatus.completed,
-      borderRadius: itemBorderRadius,
-      user: user,
-    );
-  }
-
-  void _toggle() {
-    final bool isOpen = _controller.status == AnimationStatus.completed;
-    _controller.fling(velocity: isOpen ? -2 : 2);
-  }
-
-  void _handleDragUpdate(DragUpdateDetails details) {
-    _controller.value -= details.primaryDelta! / maxHeight;
-  }
-
-  void _handleDragEnd(DragEndDetails details) {
-    if (_controller.isAnimating ||
-        _controller.status == AnimationStatus.completed) return;
-
-    final double flingVelocity =
-        details.velocity.pixelsPerSecond.dy / maxHeight;
-    if (flingVelocity < 0.0) {
-      _controller.fling(velocity: math.max(2.0, -flingVelocity));
-    } else if (flingVelocity > 0.0) {
-      _controller.fling(velocity: math.min(-2.0, -flingVelocity));
-    } else {
-      _controller.fling(velocity: _controller.value < 0.5 ? -2.0 : 2.0);
-    }
   }
 }
 
@@ -179,10 +162,13 @@ class SheetHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      top: topMargin,
+    return Container(
+      padding: EdgeInsets.only(
+        top: topMargin,
+        bottom: 16,
+      ),
       child: Text(
-        'Online Users',
+        'Online Friends',
         style: TextStyle(
           color: Colors.white,
           fontSize: fontSize,

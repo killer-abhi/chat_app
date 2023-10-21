@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:global_chat/auth/active_status.dart';
 import 'package:global_chat/providers/current_user.dart';
@@ -22,7 +20,7 @@ class _NavigationScreenState extends State<NavigationScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
   }
 
   @override
@@ -32,28 +30,23 @@ class _NavigationScreenState extends State<NavigationScreen>
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ChatWave'),
+        title: const Text(
+          'ChatWave',
+          style: TextStyle(color: Colors.black),
+        ),
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         actions: [
-          TextButton.icon(
+          IconButton(
             onPressed: () {
-              FirebaseFirestore.instance
-                  .collection('users')
-                  .doc(FirebaseAuth.instance.currentUser!.email)
-                  .get()
-                  .then((doc) {
-                if (doc.data()!.isNotEmpty) {
-                  return FirebaseFirestore.instance
-                      .collection('users')
-                      .doc(doc.get('email').toString())
-                      .update({'isOnline': false});
-                }
-              }).then((res) {
-                FirebaseAuth.instance.signOut();
-              });
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => UserProfileScreen(
+                    userDetails: userDetails,
+                  ),
+                ),
+              );
             },
-            icon: const Icon(Icons.logout),
-            label: const Text('Logout'),
+            icon: const Icon(Icons.settings_outlined),
           ),
         ],
         bottom: TabBar(
@@ -70,22 +63,16 @@ class _NavigationScreenState extends State<NavigationScreen>
             Tab(
               icon: Icon(Icons.cloud_outlined),
             ),
-            Tab(
-              icon: Icon(Icons.settings),
-            ),
           ],
         ),
       ),
       body: TabBarView(
         physics: const BouncingScrollPhysics(),
         controller: _tabController,
-        children: [
-          const ActiveStatus(),
-          const FindFriendsScreen(),
-          const GlobalChatScreen(),
-          UserProfileScreen(
-            userDetails: userDetails,
-          ),
+        children: const [
+          ActiveStatus(),
+          FindFriendsScreen(),
+          GlobalChatScreen(),
         ],
       ),
     );
