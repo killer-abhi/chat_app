@@ -95,6 +95,7 @@ class _FindFriendsScreenState extends State<FindFriendsScreen> {
                 ),
               ),
             ),
+            if (userList.isEmpty) const Text('No Users Found'),
             Expanded(
               child: GridView.builder(
                 scrollDirection: Axis.vertical,
@@ -112,7 +113,6 @@ class _FindFriendsScreenState extends State<FindFriendsScreen> {
                 itemCount: userList.length,
                 itemBuilder: (ctx, index) {
                   final user = userList[index];
-
                   return Card(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,

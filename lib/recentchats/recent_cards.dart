@@ -36,98 +36,78 @@ class _SlidingCardsViewState extends State<SlidingCardsView> {
     final currentUser =
         Provider.of<CurrentUserProvider>(context, listen: false).currUser;
 
-    return Stack(
-      children: <Widget>[
-        SafeArea(
-          child: StreamBuilder(
-            stream: FirebaseFirestore.instance
-                .collection(auth.FirebaseAuth.instance.currentUser!.email!)
-                .orderBy('updatedAt', descending: true)
-                .snapshots(),
-            builder: (context, snapshots) {
-              if (!snapshots.hasData || snapshots.data!.docs.isEmpty) {
-                return const Center(
-                  child: Text('Chat with Someone'),
-                );
-              }
-              if (snapshots.hasError) {
-                return const Center(
-                  child: Text('Something went wrong!'),
-                );
-              }
-              final loadedUsers = snapshots.data!.docs.toList();
-              final users = loadedUsers.map((e) {
-                return User(
-                  email: e.get('email'),
-                  imageUrl: e.get('imageUrl'),
-                  userId: e.get('userId'),
-                  userName: e.get('userName'),
-                );
-              }).toList();
-
-              return Column(
-                children: [
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.55,
-                    child: PageView.builder(
-                      clipBehavior: Clip.none,
-                      controller: pageController,
-                      itemCount: users.length,
-                      itemBuilder: (context, index) {
-                        // double offset = pageOffset - index;
-                        return AnimatedBuilder(
-                          animation: pageController,
-                          builder: (context, child) {
-                            double pageOffset = 0;
-                            if (pageController.position.haveDimensions) {
-                              pageOffset = pageController.page! - index;
-                            }
-                            double gauss = math.exp(
-                                -(math.pow((pageOffset.abs() - 0.5), 2) /
-                                    0.08));
-
-                            var messageTime =
-                                DateTime.fromMillisecondsSinceEpoch(
-                                    (loadedUsers[index]['updatedAt'].seconds) *
-                                        1000);
-
-                            final now = DateTime.now();
-                            var timeDiff =
-                                now.difference(messageTime).inMinutes;
-                            var timeText = '$timeDiff minutes';
-                            if (timeDiff == 0) {
-                              timeText = 'now';
-                            } else if (timeDiff > 60) {
-                              var hours = (timeDiff ~/ 60).toInt();
-                              timeText = '$hours hours';
-                              if (hours > 24) {
-                                var days = (hours ~/ 24).toInt();
-                                if (days == 1) {
-                                  timeText = 'Yesterday';
-                                } else {
-                                  timeText = '$days days';
-                                }
-                              }
-                            }
-
-                            return Transform.translate(
-                              offset: Offset(-32 * gauss * pageOffset.sign, 0),
-                              child: CardData(
-                                fromUser: currentUser,
-                                toUser: users[index],
-                                time: timeText,
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                ],
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        StreamBuilder(
+          stream: FirebaseFirestore.instance
+              .collection(auth.FirebaseAuth.instance.currentUser!.email!)
+              .orderBy('updatedAt', descending: true)
+              .snapshots(),
+          builder: (context, snapshots) {
+            if (!snapshots.hasData || snapshots.data!.docs.isEmpty) {
+              return const Center(
+                child: Text('Chat with Someone'),
               );
-            },
-          ),
+            }
+            if (snapshots.hasError) {
+              return const Center(
+                child: Text('Something went wrong!'),
+              );
+            }
+            final loadedUsers = snapshots.data!.docs.toList();
+            final users = loadedUsers.map((e) {
+              return User(
+                email: e.get('email'),
+                imageUrl: e.get('imageUrl'),
+                userId: e.get('userId'),
+                userName: e.get('userName'),
+              );
+            }).toList();
+
+            return SizedBox(
+              // margin: EdgeInsets.only(left: 20, right: 20),
+              height: 500,
+              width: double.infinity,
+              child: ListView.builder(
+                shrinkWrap: true,
+                padding: const EdgeInsets.all(20),
+                scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
+                itemCount: users.length,
+                itemBuilder: (context, index) {
+                  // double offset = pageOffset - index;
+                  var messageTime = DateTime.fromMillisecondsSinceEpoch(
+                      (loadedUsers[index]['updatedAt'].seconds) * 1000);
+
+                  final now = DateTime.now();
+                  var timeDiff = now.difference(messageTime).inMinutes;
+                  var timeText = '$timeDiff minutes';
+                  if (timeDiff == 0) {
+                    timeText = 'now';
+                  } else if (timeDiff > 60) {
+                    var hours = (timeDiff ~/ 60).toInt();
+                    timeText = '$hours hours';
+                    if (hours > 24) {
+                      var days = (hours ~/ 24).toInt();
+                      if (days == 1) {
+                        timeText = 'Yesterday';
+                      } else {
+                        timeText = '$days days';
+                      }
+                    }
+                  }
+                  return CardData(
+                    fromUser: currentUser,
+                    toUser: users[index],
+                    time: timeText,
+                  );
+                },
+              ),
+            );
+          },
         ),
+        const Spacer(),
         const OnlineUsers(),
       ],
     );

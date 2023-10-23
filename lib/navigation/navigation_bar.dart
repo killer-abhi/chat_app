@@ -75,6 +75,8 @@ class _NavigationScreenState extends State<NavigationScreen>
           GlobalChatScreen(),
         ],
       ),
+      backgroundColor:
+          Theme.of(context).colorScheme.primaryContainer.withOpacity(0.5),
     );
   }
 }

@@ -15,6 +15,7 @@ class CardData extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: 300,
       clipBehavior: Clip.none,
       margin: const EdgeInsets.only(left: 8, right: 8, bottom: 24, top: 24),
       decoration: BoxDecoration(

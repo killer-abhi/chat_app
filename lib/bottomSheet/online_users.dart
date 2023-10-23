@@ -41,7 +41,7 @@ class _OnlineUsersState extends State<OnlineUsers> {
         }).toList();
 
         users = users.where((e) => e.isOnline == true).toList();
-        return BottomSheetModal(users: users);
+        return users.length > 0 ? BottomSheetModal(users: users) : Text('');
       },
     );
   }

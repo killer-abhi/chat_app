@@ -69,45 +69,34 @@ class _BottomSheetState extends State<BottomSheetModal>
   Widget build(BuildContext context) {
     final users = widget.users;
 
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, child) {
-        return Positioned(
-          height: lerp(minHeight, maxHeight),
-          left: 0,
-          right: 0,
-          bottom: 0,
-          child: GestureDetector(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 32),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary.withRed(140),
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(32)),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+    return GestureDetector(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.primary.withRed(140),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            SheetHeader(
+              fontSize: headerFontSize,
+              topMargin: headerTopMargin,
+            ),
+            SizedBox(
+              height: 60,
+              width: double.infinity,
+              child: ListView(
+                physics: const BouncingScrollPhysics(),
+                scrollDirection: Axis.horizontal,
                 children: <Widget>[
-                  SheetHeader(
-                    fontSize: headerFontSize,
-                    topMargin: headerTopMargin,
-                  ),
-                  Container(
-                    height: 60,
-                    width: double.infinity,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      children: <Widget>[
-                        for (User user in users) _buildIcon(user),
-                      ],
-                    ),
-                  ),
+                  for (User user in users) _buildIcon(user),
                 ],
               ),
             ),
-          ),
-        );
-      },
+          ],
+        ),
+      ),
     );
   }
 
@@ -163,9 +152,9 @@ class SheetHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(
-        top: topMargin,
-        bottom: 16,
+      padding: const EdgeInsets.only(
+        top: 8,
+        bottom: 12,
       ),
       child: Text(
         'Online Friends',
