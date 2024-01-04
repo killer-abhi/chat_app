@@ -3,6 +3,7 @@ import 'package:global_chat/providers/current_user.dart';
 import 'package:global_chat/providers/google_sign_in.dart';
 import 'package:global_chat/navigation/home.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
@@ -26,10 +27,12 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'FlutterChat',
-        theme: ThemeData().copyWith(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(
-              seedColor: const Color.fromARGB(255, 63, 17, 177)),
+            seedColor: const Color.fromARGB(255, 63, 17, 177),
+          ),
         ),
         // darkTheme: ThemeData.dark(useMaterial3: true),
         home: const Home(),

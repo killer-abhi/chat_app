@@ -65,15 +65,17 @@ class _UserProfileScreen extends State<UserProfileScreen> {
           .ref()
           .child('user_images')
           .child('${widget.userDetails.email}.jpg');
-      await storageRef.putFile(_pickedImage!);
-      final imageUrl = await storageRef.getDownloadURL();
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(widget.userDetails.email)
-          .set({
-        ...widget.userDetails.toMap(),
-        'imageUrl': imageUrl,
-      });
+
+      await storageRef.putData(_pickedImage!.readAsBytesSync());
+      // await storageRef.putFile(_pickedImage!);
+      // final imageUrl = await storageRef.getDownloadURL();
+      // await FirebaseFirestore.instance
+      //     .collection('users')
+      //     .doc(widget.userDetails.email)
+      //     .set({
+      //   ...widget.userDetails.toMap(),
+      //   'imageUrl': imageUrl,
+      // });
     } else {
       await FirebaseFirestore.instance
           .collection('users')

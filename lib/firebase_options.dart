@@ -53,10 +53,10 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyC6k5-Z5XJrc3DkWFh6s1wN7mlitQQPC6E',
-    appId: '1:331822265351:android:f3bc76c297cbde4858a6a2',
-    messagingSenderId: '331822265351',
-    projectId: 'chat-app-f8268',
-    storageBucket: 'chat-app-f8268.appspot.com',
+    apiKey: 'AIzaSyBbV8imjnBA3YZiUBFguISxg-YgyYjSRnM',
+    appId: '1:692753225097:android:f9d67655d2fd973609bd58',
+    messagingSenderId: '692753225097',
+    projectId: 'global-chat-9b2e3',
+    storageBucket: 'global-chat-9b2e3.appspot.com',
   );
 }

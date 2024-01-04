@@ -71,7 +71,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
                 title: Text(toUser.userName,
                     style: const TextStyle(
-                      fontSize: 20,
+                      fontSize: 18,
                     )),
                 trailing: Text(_isOnline),
               ),
